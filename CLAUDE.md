@@ -10,6 +10,9 @@ Tredennick/Webber GPT-3.5 baseline. Full plan: see `docs/PLAN.md`.
 - [x] P0 Scaffold + acquisition spec
 - [ ] P1 Bush ingest + qrels + dev set
 - [ ] P2 Review engine + first dev-set metrics
+      (engine core built and offline-tested ahead of schedule — prompts, cost
+      caps, decision log, batch runner, tiering, metrics; gate still needs the
+      real dev-set run, which waits on corpus data + ANTHROPIC_API_KEY)
 - [ ] P3 Bush full runs + 2023 comparison table
 - [ ] P4 Enron ingest + deterministic preprocessing
 - [ ] P5 Enron qrels mapping + topic 201 review
