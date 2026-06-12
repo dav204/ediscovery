@@ -1,0 +1,45 @@
+# EDRM Enron Email Data Set v2 (PII-cleaned; 153 custodian PSTs, ~8.6 GB total).
+# Sources: archive.org + https://enrondata.readthedocs.io (EDO PST dataset docs);
+# download helpers: https://trec-legal.umiacs.umd.edu/corpora/trec/legal10/
+#
+# ACQUISITION STATUS: unverified. P0 external task: confirm per-custodian ZIP/PST
+# URLs and record sha256 at first acquisition. Only the custodians below are in
+# scope (plan: adjust after the P5 idmap coverage check).
+
+corpus: enron
+format: edrm-pst
+edition: v2                  # MUST be the v2 PII-cleaned edition (ethics rule)
+
+custodians:
+  - id: skilling-j
+    display_name: Jeffrey Skilling
+  - id: lay-k
+    display_name: Kenneth Lay
+  - id: kaminski-v
+    display_name: Vince Kaminski
+
+files:
+  - name: skilling-j-pst
+    url: null                # TODO(P0): confirm from enrondata.readthedocs.io manifest
+    sha256: null
+    dest: pst/skilling-j/
+  - name: lay-k-pst
+    url: null
+    sha256: null
+    dest: pst/lay-k/
+  - name: kaminski-v-pst
+    url: null
+    sha256: null
+    dest: pst/kaminski-v/
+  - name: trec2010-legal-topics
+    url: null                # TODO(P0): trec.nist.gov/data/legal10.html
+    sha256: null
+    dest: trec/topics.txt
+  - name: trec2010-legal-qrels
+    url: null
+    sha256: null
+    dest: trec/qrels.txt
+
+# TREC 2010 Legal Track Learning task, topic 201 = "Prepay transactions".
+# Judgments are sampled/stratified — metrics must use strata weights (see plan).
+chosen_topics: ["201"]

@@ -1,0 +1,40 @@
+[project]
+name = "ediscovery-pipeline"
+version = "0.1.0"
+description = "End-to-end AI eDiscovery benchmark on public corpora with TREC ground truth"
+requires-python = ">=3.11"
+dependencies = [
+    "duckdb>=1.0",
+    "pandas>=2.0",
+    "pyarrow>=15.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+ingest = ["libratom"]
+threading = ["jwzthreading"]
+dedup = ["datasketch"]
+review = ["anthropic>=0.40"]
+produce = ["weasyprint", "pymupdf", "pikepdf", "reportlab"]
+dev = ["pytest>=8.0"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = { find = { include = ["pipeline*"] } }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "phase0: scaffold gate",
+    "phase1: bush ingest gate",
+    "phase2: review engine gate",
+    "phase3: bush full-run gate",
+    "phase4: enron preprocessing gate",
+    "phase5: enron review gate",
+    "phase6: privilege gate",
+    "phase7: production gate",
+    "phase8: ui/narrative gate",
+]

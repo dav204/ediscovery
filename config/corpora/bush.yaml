@@ -1,0 +1,40 @@
+# Jeb Bush gubernatorial email corpus — TREC Total Recall 2015/2016.
+# 290,099 redacted emails; athome1 (2015, topics athome100-109) and athome4
+# (2016, 34 topics) share the same document set.
+#
+# ACQUISITION STATUS: unverified. Historic access required a signed "TREC Total
+# Recall Usage Agreement"; NIST now lists the collections at
+# https://trec.nist.gov/data/total-recall/ and data.nist.gov (PDR mds2-3126).
+# P0 external task: confirm current terms, fill real URLs + sha256 below.
+# sha256: null means "record at first successful acquisition".
+
+corpus: bush
+format: trec-athome          # per-message text files, doc IDs are file names
+expected_message_count: 290099
+
+files:
+  - name: athome1-collection
+    url: null                # TODO(P0): confirm from trec.nist.gov/data/total-recall/
+    sha256: null
+    dest: athome1/
+  - name: athome1-topics
+    url: null
+    sha256: null
+    dest: athome1/topics.txt
+  - name: athome1-qrels
+    url: null
+    sha256: null
+    dest: athome1/qrels.txt
+  - name: athome4-topics
+    url: null
+    sha256: null
+    dest: athome4/topics.txt
+  - name: athome4-qrels
+    url: null
+    sha256: null
+    dest: athome4/qrels.txt
+
+# Topics for this benchmark: chosen to overlap the 2023 Tredennick/Webber study.
+# TODO(P0): extract their exact topic IDs + published per-topic recall/precision
+# from the EDRM/Law.com articles, then list 2-4 topic IDs here.
+chosen_topics: []

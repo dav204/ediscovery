@@ -1,0 +1,14 @@
+# Corpus data, derived stores, productions — never committed (see CLAUDE.md)
+data/
+*.pst
+*.mbox
+
+# Environments / caches
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+
+# Secrets
+.env

@@ -1,0 +1,18 @@
+# Budget guardrails. Prices are USD per million tokens at BATCH rates (50% of standard).
+# Verify against https://www.anthropic.com/pricing before each full run.
+
+prices:
+  claude-haiku-4-5:  {input: 0.50, output: 2.50}
+  claude-sonnet-4-6: {input: 1.50, output: 7.50}
+  claude-fable-5:    {input: 5.00, output: 25.00}
+
+# Per-phase caps. dev_loop is intentionally tight: protocol iteration must be cheap.
+# Full-run caps are placeholders — set with Dan before P3/P5 full runs.
+caps:
+  dev_loop:     {usd: 25}
+  bush_full:    {usd: 0}     # 0 = locked; must be raised explicitly before P3
+  enron_review: {usd: 0}     # locked until P5 idmap coverage gate passes
+  privilege:    {usd: 0}     # locked until P6
+  narrative:    {usd: 0}     # locked until P8
+
+total_stop_usd: 200

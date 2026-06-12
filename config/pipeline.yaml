@@ -1,0 +1,34 @@
+# Global pipeline settings. Single source of truth for paths, models, seeds.
+
+paths:
+  raw: data/raw
+  store: data/store
+  batches: data/batches
+  decisions: data/decisions
+  spend: data/spend
+  productions: data/productions
+  artifacts: artifacts
+
+models:
+  tier1: claude-haiku-4-5
+  tier2: claude-fable-5
+  narrative: claude-fable-5
+
+batch:
+  max_requests_per_batch: 10000   # Anthropic Message Batches API hard cap
+  poll_interval_seconds: 60
+  max_output_tokens: 512
+
+seeds:
+  devset: 42
+  qc_sample: 1337
+  elusion: 7
+
+sampling:
+  devset_per_topic_max: 500
+  devset_relevant_target: 150
+  qc_fraction: 0.05               # stratified tier-2 QC sample of confident tier-1 calls
+  elusion_sample_size: 500
+
+normalization:
+  version: v1                     # bump when body_norm rules change (invalidates body_hash)

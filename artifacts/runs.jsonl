@@ -1,0 +1,2 @@
+{"ts": "2026-06-12T23:53:03.358556+00:00", "command": "status", "argv": ["status"], "exit_code": 0}
+{"ts": "2026-06-12T23:53:03.580159+00:00", "command": "acquire", "argv": ["acquire", "--corpus", "bush", "--verify-only"], "exit_code": 1}
