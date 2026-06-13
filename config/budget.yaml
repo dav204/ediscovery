@@ -10,7 +10,7 @@ prices:
 # Full-run caps are placeholders — set with Dan before P3/P5 full runs.
 caps:
   dev_loop:     {usd: 25}
-  bush_full:    {usd: 0}     # 0 = locked; must be raised explicitly before P3
+  bush_sample:  {usd: 0}     # 0 = locked; Bush/HiCAL validation run (P3), small + predictable
   enron_review: {usd: 0}     # locked until P5 idmap coverage gate passes
   privilege:    {usd: 0}     # locked until P6
   narrative:    {usd: 0}     # locked until P8

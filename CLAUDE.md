@@ -1,19 +1,25 @@
 # AI Discovery Simulation — working rules
 
-End-to-end eDiscovery benchmark: tiered Claude review on EDRM Enron v2 (TREC 2010 Legal
-topic 201 "Prepay transactions") and the TREC Total Recall Jeb Bush corpus
-(athome1/athome4), validated against NIST relevance judgments and compared to the 2023
-Tredennick/Webber GPT-3.5 baseline. Full plan: see `docs/PLAN.md`.
+End-to-end eDiscovery benchmark. **Primary corpus + end-to-end showcase: EDRM Enron v2**
+(TREC 2010 Legal topic 201 "Prepay transactions"; carries the privilege phase). **Validation
+/ 2023-comparison layer: the Jeb Bush corpus via the HiCAL public sample** (50K docs,
+athome4 topics 401–409), compared to the 2023 Tredennick/Webber GPT-3.5 baseline. Both
+validated against TREC relevance judgments. Full plan: see `docs/PLAN.md`.
 
 ## Phase status
 
 - [x] P0 Scaffold + acquisition spec
 - [ ] P1 Bush ingest + qrels + dev set
+      (qrels parse + seeded dev sets done 2026-06-13 — HiCAL sample acquired +
+      sha256-pinned in `data/raw/bush/`, `qrels_raw` parquet built from
+      `athome4.qrel.sample` restricted to the 9 sample topics, byte-identical
+      dev-set artifacts committed for 401–409; ingest of `athome4_sample.tgz`
+      still pending — no longer blocked, the sample is a clean public download)
 - [ ] P2 Review engine + first dev-set metrics
       (engine core built and offline-tested ahead of schedule — prompts, cost
       caps, decision log, batch runner, tiering, metrics; gate still needs the
       real dev-set run, which waits on corpus data + ANTHROPIC_API_KEY)
-- [ ] P3 Bush full runs + 2023 comparison table
+- [ ] P3 Bush/HiCAL validation runs + 2023 comparison table (9 topics)
 - [ ] P4 Enron ingest + deterministic preprocessing
 - [ ] P5 Enron qrels mapping + topic 201 review
 - [ ] P6 Privilege review (Enron)
@@ -30,7 +36,9 @@ pytest                             # must be green before any batch submission
 python -m pipeline status          # phase/artifact dashboard — run first in a fresh session
 python -m pipeline spend           # budget burn vs caps
 python -m pipeline acquire --corpus bush [--verify-only]
-python -m pipeline review --corpus bush --topic <topic> --tier 1 --dev-set --dry-run
+python -m pipeline qrels --corpus bush
+python -m pipeline devset --corpus bush [--topic 401]   # default: all chosen_topics
+python -m pipeline review --corpus bush --topic 401 --tier 1 --dev-set --dry-run
 ```
 
 ## Hard rules
@@ -58,7 +66,18 @@ review, no privilege phase for the Bush corpus, no backend for the review UI.
 
 - venv at `.venv/` (created with uv); base deps installed, per-phase extras in
   `pyproject.toml` (`uv pip install -e .[ingest]` etc.).
-- Remote container egress is allowlist-gated. Corpus hosts (trec.nist.gov, archive.org,
-  trec-legal.umiacs.umd.edu, uwaterloo.ca) must be added to the environment network
-  policy before `acquire` download mode works; `acquire --verify-only` accepts files
-  manually placed in `data/raw/<corpus>/`.
+- Remote container egress is allowlist-gated. **Enron** corpus hosts (archive.org,
+  trec-legal.umiacs.umd.edu, trec.nist.gov) must be added to the environment network
+  policy before `acquire --corpus enron` download mode works; `acquire --verify-only`
+  accepts files manually placed in `data/raw/<corpus>/`. **Bush/HiCAL** downloads from
+  `raw.githubusercontent.com` (allowlist that host in-container; local Mac sessions have
+  normal egress).
+- (2026-06-13) **Bush provenance rule.** Source Bush ONLY from the HiCAL public sample
+  (`github.com/hical/sample-dataset` — redacted/sampled lineage, clean provenance). This
+  corpus has a documented PII-leak history (Bush's 2015 self-publication exposed bystander
+  SSNs/addresses/medical info before redaction). Therefore: do NOT use floating full-corpus
+  copies (e.g. archive.org); do NOT screenshot, quote, or paraphrase any Bush email content
+  in artifacts/UI/writeups; full TREC access is NOT pursued. **Bush topics are 401–409
+  only** — 427 Slot Machines is NOT in the sample, so do not reintroduce it (401 Summer
+  Olympics is the worked-example anchor). The manifest + rationale live in
+  `config/corpora/bush.yaml`.

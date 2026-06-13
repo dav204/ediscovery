@@ -1,40 +1,56 @@
-# Jeb Bush gubernatorial email corpus — TREC Total Recall 2015/2016.
-# 290,099 redacted emails; athome1 (2015, topics athome100-109) and athome4
-# (2016, 34 topics) share the same document set.
+# Jeb Bush gubernatorial email corpus — VALIDATION layer (Enron is primary).
 #
-# ACQUISITION STATUS: unverified. Historic access required a signed "TREC Total
-# Recall Usage Agreement"; NIST now lists the collections at
-# https://trec.nist.gov/data/total-recall/ and data.nist.gov (PDR mds2-3126).
-# P0 external task: confirm current terms, fill real URLs + sha256 below.
-# sha256: null means "record at first successful acquisition".
+# SOURCE: the HiCAL public sample, https://github.com/hical/sample-dataset
+#   50,000 sampled documents drawn from the TREC 2016 Total Recall athome4
+#   collection (290,099 redacted Bush emails, 34 topics), published with the
+#   sample's 9 designated topics and the athome4 relevance judgments.
+#   Cite: Grossman, Cormack & Roegiest, "TREC 2016 Total Recall Track Overview".
+#
+# WHY THE SAMPLE, NOT THE FULL CORPUS (2026-06-13):
+#   - Access: the full 290K corpus + server-protocol qrels are gated behind TREC
+#     track participation and signed usage agreements — not a clean download.
+#   - Provenance: this corpus has a documented PII-leak history. Bush's Feb 2015
+#     self-publication exposed thousands of bystanders' SSNs, home addresses, and
+#     medical info; the raw PSTs were pulled within a day and replaced with a
+#     redacted version. The HiCAL sample is the redacted/sampled lineage with
+#     clean public provenance. Floating copies elsewhere (e.g. archive.org) are
+#     unvetted — DO NOT use them. Never screenshot or quote Bush email content.
+#
+# Full TREC access is NOT pursued: the public sample is sufficient for a credible
+# proof-of-concept and keeps provenance defensible (see docs/PLAN.md open questions).
 
 corpus: bush
-format: trec-athome          # per-message text files, doc IDs are file names
-expected_message_count: 290099
+format: trec-athome4-sample   # whole-doc text files; doc IDs are 6-digit athome4 nums
+expected_message_count: 50000
 
+# Acquisition is a plain HTTPS download from the GitHub raw endpoint (verified
+# 2026-06-13: athome4_sample.tgz is a 48.9 MB gzip blob, not a git-LFS pointer).
+# topics.sample / qrel.sample carry only doc IDs and topic text — no email
+# content. sha256 null is pinned into this file after the first acquire.
 files:
-  - name: athome1-collection
-    url: null                # TODO(P0): confirm from trec.nist.gov/data/total-recall/
-    sha256: null
-    dest: athome1/
-  - name: athome1-topics
-    url: null
-    sha256: null
-    dest: athome1/topics.txt
-  - name: athome1-qrels
-    url: null
-    sha256: null
-    dest: athome1/qrels.txt
-  - name: athome4-topics
-    url: null
-    sha256: null
-    dest: athome4/topics.txt
-  - name: athome4-qrels
-    url: null
-    sha256: null
-    dest: athome4/qrels.txt
+  - name: athome4-topics-sample
+    url: https://raw.githubusercontent.com/hical/sample-dataset/master/athome4.topics.sample
+    sha256: e746125ff3eafed9f1d3984d1b9bbdac06ae9f4e15a83ea667a2cd939f829ccd
+    dest: athome4.topics.sample
+  - name: athome4-qrel-sample
+    url: https://raw.githubusercontent.com/hical/sample-dataset/master/athome4.qrel.sample
+    sha256: 2da87fdd58991156d5c8ece0f5cb06592e5b8f4a1ce4472882bf4fbbe8a5c056
+    dest: athome4.qrel.sample
+  - name: athome4-docs
+    url: https://raw.githubusercontent.com/hical/sample-dataset/master/athome4_sample.tgz
+    sha256: 273936fb682d2cb47fea1d167337b07aea79a4ab6a8ce26b7a56b40af244b111
+    dest: athome4_sample.tgz
 
-# Topics for this benchmark: chosen to overlap the 2023 Tredennick/Webber study.
-# TODO(P0): extract their exact topic IDs + published per-topic recall/precision
-# from the EDRM/Law.com articles, then list 2-4 topic IDs here.
-chosen_topics: []
+# The HiCAL sample designates 9 topics (athome4.topics.sample = 401-409). The
+# qrel.sample ships the full 34-topic athome4 judgments, but qrels.parse restricts
+# to the 9 sample topics — the set the 50K-doc sample is built to support.
+#
+# 2023 baseline overlap: Tredennick/Webber (GPT-3.5) ran ALL 34 athome4 topics
+# (401-434), so all 9 sample topics overlap their study completely. They published
+# only an aggregate (11/34 topics at >=75% recall and >=60% precision; scatter
+# plot, no per-topic table). 427 Slot Machines (their worked example) is NOT in
+# the sample; 401 Summer Olympics (their other named example) IS — it is our
+# worked-example anchor. P3 reports per-topic Claude recall/precision on these 9
+# against that aggregate, plus the 2023 20/20/40 sampling cell where grades allow
+# (all 9 have >=20 docs in each of rel0/rel1/rel2, verified 2026-06-13).
+chosen_topics: ["401", "402", "403", "404", "405", "406", "407", "408", "409"]

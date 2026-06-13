@@ -1,22 +1,19 @@
 {
   "corpus": "bush",
-  "verify_only": true,
-  "ran_at": "2026-06-12T23:53:03.577863+00:00",
+  "verify_only": false,
+  "ran_at": "2026-06-13T04:50:12.995969+00:00",
   "entries": {
-    "athome1-collection": {
-      "status": "missing"
+    "athome4-topics-sample": {
+      "status": "verified",
+      "sha256": "e746125ff3eafed9f1d3984d1b9bbdac06ae9f4e15a83ea667a2cd939f829ccd"
     },
-    "athome1-topics": {
-      "status": "missing"
+    "athome4-qrel-sample": {
+      "status": "verified",
+      "sha256": "2da87fdd58991156d5c8ece0f5cb06592e5b8f4a1ce4472882bf4fbbe8a5c056"
     },
-    "athome1-qrels": {
-      "status": "missing"
-    },
-    "athome4-topics": {
-      "status": "missing"
-    },
-    "athome4-qrels": {
-      "status": "missing"
+    "athome4-docs": {
+      "status": "verified",
+      "sha256": "273936fb682d2cb47fea1d167337b07aea79a4ab6a8ce26b7a56b40af244b111"
     }
   }
 }

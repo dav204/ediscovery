@@ -24,7 +24,7 @@ def test_budget_config_loads():
     assert budget.total_stop_usd > 0
     assert budget.caps["dev_loop"] > 0
     # Full-run caps ship locked; raising them is an explicit pre-run decision.
-    assert budget.caps["bush_full"] == 0
+    assert budget.caps["bush_sample"] == 0
     for model, price in budget.prices.items():
         assert price["input"] > 0 and price["output"] > 0, model
 

@@ -10,7 +10,7 @@ pytestmark = pytest.mark.phase2
 def budget():
     return BudgetConfig(
         prices={"claude-haiku-4-5": {"input": 0.50, "output": 2.50}},
-        caps={"dev_loop": 25.0, "bush_full": 0.0},
+        caps={"dev_loop": 25.0, "bush_sample": 0.0},
         total_stop_usd=200.0,
     )
 
@@ -38,7 +38,7 @@ def test_check_passes_under_cap(tmp_path, budget):
 def test_check_locked_phase_raises(tmp_path, budget):
     est = cost.estimate(1, 10, 10, 10, "claude-haiku-4-5", budget)
     with pytest.raises(cost.BudgetExceeded, match="locked"):
-        cost.check("bush_full", est, budget, tmp_path / "spend.jsonl")
+        cost.check("bush_sample", est, budget, tmp_path / "spend.jsonl")
 
 
 def test_check_counts_prior_spend(tmp_path, budget):
