@@ -1,0 +1,28 @@
+# Counsel entity list for the Enron privilege screen (P6).
+# All names are public principals from the Powers Report, bankruptcy examiner
+# reports, and trial records. VERIFY against the Powers Report during P6 before
+# the privilege run; extend with corpus-derived addresses (legal dept domains,
+# signature blocks) at that time.
+
+in_house:
+  - {name: James Derrick, role: General Counsel}
+  - {name: Mark Haedicke, role: Managing Director & General Counsel, ENA}
+  - {name: Jordan Mintz, role: VP & General Counsel, Global Finance}
+  - {name: Kristina Mordaunt, role: Counsel}
+  - {name: Rex Rogers, role: Associate General Counsel}
+  - {name: Richard Sanders, role: Assistant General Counsel, litigation}
+
+outside_firms:
+  - firm: Vinson & Elkins
+    domain_hints: [velaw.com]
+    attorneys:
+      - {name: Joseph Dilg}
+      - {name: Max Hendrick III}
+      - {name: Ronald Astin}
+  - firm: Andrews & Kurth
+    domain_hints: [andrews-kurth.com, akllp.com]
+    attorneys: []
+
+# Generic signals for the deterministic pre-filter (screen.py, P6):
+domain_signals: [velaw.com]
+keyword_signals: ["attorney-client", "attorney client privilege", "legal opinion", "work product"]
