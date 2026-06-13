@@ -12,13 +12,13 @@ from datetime import datetime, timezone
 
 from . import acquire as acquire_mod
 from .config import load_budget_config, load_pipeline_config
+from .qrels import devset as devset_mod
+from .qrels import parse as qrels_mod
 from .store import TABLES, table_path
 
 NOT_IMPLEMENTED = {
     "ingest": "P1 (bush) / P4 (enron)",
     "preprocess": "P4",
-    "qrels": "P1 (bush) / P5 (enron)",
-    "devset": "P1",
     "review": "P2",
     "privilege": "P6",
     "produce": "P7",
@@ -99,6 +99,15 @@ def build_parser() -> argparse.ArgumentParser:
     p_acquire.add_argument("--corpus", required=True, choices=["bush", "enron"])
     p_acquire.add_argument("--verify-only", action="store_true")
     p_acquire.set_defaults(func=cmd_acquire)
+
+    p_qrels = sub.add_parser("qrels", help="parse relevance judgments into qrels_raw")
+    p_qrels.add_argument("--corpus", required=True, choices=["bush", "enron"])
+    p_qrels.set_defaults(func=qrels_mod.main)
+
+    p_devset = sub.add_parser("devset", help="build seeded stratified dev sets")
+    p_devset.add_argument("--corpus", required=True, choices=["bush", "enron"])
+    p_devset.add_argument("--topic", help="default: all chosen_topics from the corpus config")
+    p_devset.set_defaults(func=devset_mod.main)
 
     sub.add_parser("status", help="phase/artifact dashboard").set_defaults(func=cmd_status)
     sub.add_parser("spend", help="budget burn vs caps").set_defaults(func=cmd_spend)
