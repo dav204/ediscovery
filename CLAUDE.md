@@ -8,6 +8,9 @@ Tredennick/Webber GPT-3.5 baseline. Full plan: see `docs/PLAN.md`.
 ## Phase status
 
 - [x] P0 Scaffold + acquisition spec
+      (environment + offline tests verified 2026-06-12: uv venv, base/dev deps
+      install cleanly, full suite 56/56 green, `status`/`spend` show a clean
+      pre-run state — no corpus ingested, $0.00 spend)
 - [ ] P1 Bush ingest + qrels + dev set
 - [ ] P2 Review engine + first dev-set metrics
       (engine core built and offline-tested ahead of schedule — prompts, cost

@@ -27,6 +27,11 @@ uv venv .venv && uv pip install --python .venv/bin/python -e .[dev]
 .venv/bin/python -m pipeline status
 ```
 
+_Verified 2026-06-12: the `uv` venv plus base and `dev` deps install cleanly, and the
+full offline test suite passes (56/56). No corpus runs have happened — `status` and
+`spend` show a clean pre-run scaffold (empty `bush`/`enron` stores, $0.00 spend against
+all caps)._
+
 ## Ethics
 
 This is a simulation/benchmark, not legal advice; no output here would be defensible in
