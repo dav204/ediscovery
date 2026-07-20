@@ -64,6 +64,23 @@ Dan's brief: run a complete, openly documented eDiscovery workflow (dedup, threa
 - **Chosen topics:** all 9 HiCAL sample topics — 401 Summer Olympics, 402 Space, 403 Bottled
   Water, 404 Eminent Domain, 405 Newt Gingrich, 406 Felon Disenfranchisement, 407 Faith-Based
   Initiatives, 408 Invasive Species, 409 Climate Change. Rationale in `config/corpora/bush.yaml`.
+- **Enron sourcing correction (2026-07-20, local-Mac session).** The EDRM v2 **PST edition
+  has no live host**: the original CloudFront/S3 URLs 404, the buckets are gone, and
+  edrm.net's Datasets page no longer lists any Enron set (residual-PII history). The v2
+  **XML edition** survives on archive.org (item `edrm.enron.email.data.set.v2.xml`,
+  Searchdaimon mirror of the official release, CC-BY-3.0-US, md5/sha1 manifest published):
+  per-custodian zips of EDRM XML load files + native/text bodies + attachments. We source
+  the three chosen custodians from there (~9 GB; kaminski-v is split 1of2/2of2) — same
+  corpus, same PII-cleaned edition, different container. **P4 parses EDRM XML instead of
+  PSTs** (drops pypff/readpst entirely), and the XML carries the official EDRM v2 DocIDs
+  that the TREC 2010 qrels reference, so the P5 idmap cascade collapses toward a direct
+  join (top risk #1 largely retired; UMD's `docids-v2.csv.bz2` is the cross-check).
+  Ground truth verified live: `qrels.t10legallearn.gz` on trec.nist.gov (+UMD mirror),
+  topic statements via the track overview PDF (NIST) and Wayback copies of legal10.pdf /
+  complaint-09.pdf (originals 404). Fallbacks if XML proves insufficient: UMD
+  `edrmv2txt-v2.tar.bz2` (dedup text rendition, 625 MB) and `edrmv2nativeattach.tar.bz2`.
+  The ibiblio "RevisedEDRMv1" PST set is **not** usable (v1-based, no Skilling custodian,
+  not qrels-compatible). All URLs + sizes in `config/corpora/enron.yaml`.
 
 ## Prerequisite (Dan, outside the repo)
 
@@ -119,7 +136,7 @@ Review idempotency contract: candidates = in-scope docs minus docs with a curren
 - **P1 Bush ingest + qrels + dev set** — extract `athome4_sample.tgz` → whole-doc messages parquet; `qrels.parse` (HiCAL `topic 0 docno rel`, restricted to the 9 sample topics); trivial filename↔doc-ID idmap (single namespace); seeded stratified dev set (150 relevant + up to 350 judged negatives/topic). *Gate:* doc count == 50,000; idmap 100% on the 9 topics (verified: all judged docs are in the sample); dev-set IDs committed; re-run byte-identical. **[DONE — qrels + dev set 2026-06-13; ingest + idmap + coverage artifact 2026-07-20.]**
 - **P2 Review engine + first metrics** — protocol v1 (human-edited), batch runner (build → dry-run → ≤10K chunks → poll → parse), cost caps, decision log, tiering, metrics. Tier 1 Haiku on dev set → recall/precision/F1; iterate protocol (version bumps); tier-2 borderline routing. *Gate:* dev run under cap; metrics artifact + hand-computed-confusion-matrix test green; re-run submits 0 requests; mock-client batch tests green.
 - **P3 Bush/HiCAL validation runs** — all 9 sample topics (401–409): tier 1 → tier 2 borderline + stratified QC sample → elusion sample. *Gate:* zero decision gaps; spend reconciles with console (capped by `bush_sample`); **2023-vs-2026 comparison table in artifacts/** — per-topic Claude recall/precision on the 9 overlapping topics vs the 2023 study's aggregate (11/34 at ≥75%/≥60%), plus the 20/20/40 replication cell where sample grades allow. A modest but legitimate comparison; Enron remains the end-to-end showcase.
-- **P4 Enron ingest + preprocessing** — PST parse (per-PST subprocess isolation), dedup, threading, inclusive detection, custodian tagging. *Gate:* threading/dedup/inclusive unit+golden tests green; parse failure rate <1%, itemized; fallback path tested.
+- **P4 Enron ingest + preprocessing** — EDRM XML parse (per-custodian-zip isolation; v2 XML edition, see Acquisition findings 2026-07-20), dedup, threading, inclusive detection, custodian tagging. *Gate:* threading/dedup/inclusive unit+golden tests green; parse failure rate <1%, itemized; XML DocID captured per message for the P5 join.
 - **P5 Enron qrels + topic 201 review** — idmap cascade vs TREC 2010 qrels (coverage gate ≥ ~90% of judged docs for selected custodians **before any token spend**; else swap custodians — idmap per-custodian is cheap); strata-aware metrics; dev set → full run, reusing P2 engine unchanged.
 - **P6 Privilege (Enron)** — deterministic counsel screen (in-house: Derrick, Haedicke, Mintz, Mordaunt, Rogers…; V&E: Dilg, Hendrick, Astin… — verify list against Powers Report in-phase) → Fable 5 privilege pass → EDRM-style privilege log. *Gate:* same decision schema; log golden test; name/domain matcher unit tests.
 - **P7 Production** — render → redact → Bates (`ENRON-{seq:08d}`, persisted allocator) → DAT/OPT. *Gate:* Bates continuity; **redaction verification: extract text from every redacted PDF, assert redacted strings absent**; DAT/OPT golden-byte tests.
@@ -131,11 +148,11 @@ Unit (synthetic fixtures, zero network): threading edge cases, inclusive truth t
 
 ## Top risks
 
-1. **Enron qrels↔PST ID mapping** — tiered matcher + hard coverage gate before token spend; honest coverage reporting; custodian swap fallback.
+1. **Enron qrels↔corpus ID mapping** — largely retired by the XML re-source (official EDRM DocIDs in-band); the hard coverage gate before token spend and honest coverage reporting stay, with custodian swap as fallback.
 2. **Acquisition terms/access** — *retired for Bush* (HiCAL public sample, plain download, clean provenance; full TREC access not pursued). Remaining exposure is Enron only (EDRM v2 + allowlist); separable acquire step keeps everything downstream keyed off checksummed `data/raw/`.
 3. **2023 comparison apples-to-apples** — *resolved:* all 9 HiCAL topics fall in the study's 401–434, so overlap is complete; comparison is per-topic Claude vs their published aggregate (no per-topic table exists), plus the 20/20/40 cell. Modest but legitimate claim.
 4. **Budget** — caps + dry-run discipline + Haiku-first tiering; if dev-set borderline rate >25%, fix protocol before scaling.
-5. **PST parse / pypff instability** — readpst fallback, per-PST isolation, <1% failure gate.
+5. **PST parse / pypff instability** — retired 2026-07-20: P4 parses the EDRM v2 XML edition (no PSTs); the <1% itemized-failure gate stays.
 
 ## Verification (end-to-end)
 

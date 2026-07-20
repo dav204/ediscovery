@@ -58,7 +58,9 @@ def _verify_entry(target: Path, pinned_sha256: str | None) -> dict:
 def _download_entry(url: str, target: Path) -> None:
     target.parent.mkdir(parents=True, exist_ok=True)
     tmp = target.with_suffix(target.suffix + ".part")
-    with urllib.request.urlopen(url, timeout=120) as resp, open(tmp, "wb") as out:
+    # trec.nist.gov 403s the default Python-urllib agent (2026-07-20).
+    req = urllib.request.Request(url, headers={"User-Agent": "ediscovery-pipeline/0.1"})
+    with urllib.request.urlopen(req, timeout=120) as resp, open(tmp, "wb") as out:
         while chunk := resp.read(1 << 20):
             out.write(chunk)
     tmp.rename(target)

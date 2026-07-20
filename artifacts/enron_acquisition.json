@@ -1,0 +1,47 @@
+{
+  "corpus": "enron",
+  "verify_only": true,
+  "ran_at": "2026-07-20T21:42:11.324693+00:00",
+  "entries": {
+    "skilling-j-xml": {
+      "status": "verified",
+      "sha256": "5c8f72dc792c02188300619d8cabf695a40fac000c77096a6d723c904f355739"
+    },
+    "lay-k-xml": {
+      "status": "verified",
+      "sha256": "f026061fe0a95b47e28cd370fef4e8dc205a3186053b0d821984da8dbbb9bdc5"
+    },
+    "kaminski-v-xml-1of2": {
+      "status": "verified",
+      "sha256": "e44c0b6e48ab27113268b6d6dab986c2383cdce06996bba2d9d6091b7a4c3712"
+    },
+    "kaminski-v-xml-2of2": {
+      "status": "verified",
+      "sha256": "8cf248cdca0dcb1970f6f1090b29d956be1c2626d7b6d701f06cd349ec0cf23d"
+    },
+    "trec2010-learning-qrels": {
+      "status": "verified",
+      "sha256": "5a170f455c3d1f3088c3505df0ca1a40934d273a7266ca08c6248b7cd84e9b66"
+    },
+    "trec2010-track-overview": {
+      "status": "verified",
+      "sha256": "e41a28209c1831b638199d289e831d7124946baa6f37eddba646df0589edfe43"
+    },
+    "trec2010-guidelines": {
+      "status": "verified",
+      "sha256": "0afa4e3a39f761ce18bc311131d7f3cb4d0f1e4c405b838fc00c549901ff0917"
+    },
+    "trec2010-complaint": {
+      "status": "verified",
+      "sha256": "90319aa2feaff5776d2fc631ba484edf06301199cff8e7cc42f410eabe1dee5f"
+    },
+    "trec2010-docids": {
+      "status": "verified",
+      "sha256": "2621059b3122223e84ec62ac1a09d84d06b9939b76ca6d199213462a1e84d457"
+    },
+    "trec2010-seed": {
+      "status": "verified",
+      "sha256": "a774f865e6ae392acbd68a3edd477d7a1b8665d6fd07c070f7795dab551f3c13"
+    }
+  }
+}
