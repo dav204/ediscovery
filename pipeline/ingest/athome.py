@@ -23,6 +23,7 @@ import sys
 import tarfile
 from datetime import datetime, timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import pyarrow as pa
 
@@ -38,8 +39,15 @@ from .normalize import (
 
 TARBALL = "athome4_sample.tgz"
 
-_HEADER_RE = re.compile(r"^([A-Za-z][A-Za-z-]*):[ \t]+(.*)$")
+# Outlook text exports delimit header values with a TAB. Requiring it (or an
+# empty value) is what keeps prose like "Comment: I oppose ..." at the top of a
+# webform doc from being eaten as a header.
+_HEADER_RE = re.compile(r"^([A-Za-z][A-Za-z0-9-]*):(?:\t+(.*)|[ \t]*)$")
 _ADDR_RE = re.compile(r"<([^<>]+)>")
+
+# Naive Sent: timestamps are governor's-office local time; converted via
+# America/New_York (DST-aware) to true UTC instants. date_raw keeps the original.
+_LOCAL_TZ = ZoneInfo("America/New_York")
 
 _DATE_FORMATS = (
     "%A, %B %d, %Y %I:%M %p",
@@ -71,7 +79,7 @@ def split_headers(text: str) -> tuple[dict[str, str], str, list[str]]:
             break
         m = _HEADER_RE.match(line)
         if m:
-            key, value = m.group(1), m.group(2).strip()
+            key, value = m.group(1), (m.group(2) or "").strip()
             if key in headers:
                 headers[key] = f"{headers[key]}; {value}"
             else:
@@ -112,15 +120,22 @@ def parse_sent(value: str) -> datetime | None:
     v = re.sub(r"\s+", " ", value.replace("\xa0", " ")).strip()
     for fmt in _DATE_FORMATS:
         try:
-            return datetime.strptime(v, fmt).replace(tzinfo=timezone.utc)
+            local = datetime.strptime(v, fmt).replace(tzinfo=_LOCAL_TZ)
+            return local.astimezone(timezone.utc)
         except ValueError:
             continue
     return None
 
 
 def decode_doc(raw: bytes) -> tuple[str, list[str]]:
+    """utf-8, then cp1252 (Outlook-era smart quotes/dashes), then latin-1
+    (never fails; maps cp1252's five undefined bytes to C1 controls)."""
     try:
         return raw.decode("utf-8"), []
+    except UnicodeDecodeError:
+        pass
+    try:
+        return raw.decode("cp1252"), ["decode_fallback_cp1252"]
     except UnicodeDecodeError:
         return raw.decode("latin-1"), ["decode_fallback_latin1"]
 
@@ -196,6 +211,11 @@ def ingest_tarball(tgz_path: Path, expected_count: int | None) -> tuple[list[dic
             by_name[member.name] = parse_doc(member.name, raw)
     rows = [by_name[name] for name in sorted(by_name)]
     docnos = [Path(name).name for name in sorted(by_name)]
+    dupes = {d for d in docnos if docnos.count(d) > 1} if len(set(docnos)) != len(docnos) else set()
+    if dupes:
+        raise ValueError(
+            f"{tgz_path.name}: duplicate doc numbers across members: {sorted(dupes)[:3]}"
+        )
     if expected_count is not None and len(rows) != expected_count:
         raise ValueError(
             f"{tgz_path.name}: {len(rows)} documents, expected {expected_count}"

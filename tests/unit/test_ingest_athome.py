@@ -1,6 +1,7 @@
 """Bush athome4-sample ingest on synthetic documents (no real corpus content)."""
 
 import io
+import json
 import tarfile
 
 import pyarrow as pa
@@ -9,6 +10,7 @@ import pytest
 from pipeline.ingest.athome import (
     build_idmap,
     coverage_report,
+    decode_doc,
     ingest_tarball,
     parse_doc,
     parse_from,
@@ -95,11 +97,42 @@ def test_parse_from_variants():
     assert parse_from("Alice Example") == ("Alice Example", None)
 
 
-def test_parse_sent_formats():
-    assert parse_sent("Monday, January 07, 2002 9:05 AM").year == 2002
+def test_parse_sent_converts_eastern_to_utc():
+    est = parse_sent("Monday, January 07, 2002 9:05 AM")
+    assert (est.year, est.hour, est.minute) == (2002, 14, 5)  # EST = UTC-5
+    edt = parse_sent("Monday, July 08, 2002 9:05 AM")
+    assert edt.hour == 13  # EDT = UTC-4
     assert parse_sent("Monday, January 07, 2002 9:05:30 AM").second == 30
     assert parse_sent("1/7/2002 9:05 AM").month == 1
     assert parse_sent("not a date") is None
+
+
+def test_split_headers_requires_tab_so_prose_stays_body():
+    text = "Comment: I support widget reform\n\nPlease consider it.\n"
+    headers, body, warnings = split_headers(text)
+    assert headers == {}
+    assert body == text
+    assert warnings == ["no_header_block"]
+
+
+def test_split_headers_empty_value_does_not_break_block():
+    text = "From:\talice@example.gov\nSubject:\nAttachments:\twidgets.xls\n\nbody\n"
+    headers, body, warnings = split_headers(text)
+    assert headers == {"From": "alice@example.gov", "Subject": "", "Attachments": "widgets.xls"}
+    assert body == "body\n"
+    assert warnings == []
+
+
+def test_split_headers_accepts_digit_keys():
+    headers, _, warnings = split_headers("X400-To:\tsynthetic route\n\nbody\n")
+    assert headers == {"X400-To": "synthetic route"}
+    assert warnings == []
+
+
+def test_decode_cp1252_before_latin1():
+    text, warnings = decode_doc(b"a \x93quoted\x94 word\n")
+    assert warnings == ["decode_fallback_cp1252"]
+    assert "“quoted”" in text
 
 
 def test_parse_doc_full_fields():
@@ -115,10 +148,16 @@ def test_parse_doc_full_fields():
     assert row["token_estimate"] > 0
 
 
-def test_parse_doc_latin1_fallback_warns():
+def test_parse_doc_cp1252_fallback_warns():
     row = parse_doc("athome4_test/000124", b"Caf\xe9 synthetic body\n")
-    assert "decode_fallback_latin1" in row["parse_warnings"]
+    assert "decode_fallback_cp1252" in row["parse_warnings"]
     assert "Café" in row["body_text"]
+
+
+def test_parse_doc_latin1_last_resort():
+    # 0x8f is undefined in cp1252, so only latin-1 can decode it
+    row = parse_doc("athome4_test/000125", b"synthetic \x8f body\n")
+    assert "decode_fallback_latin1" in row["parse_warnings"]
 
 
 def test_ingest_tarball_sorts_and_counts(tmp_path):
@@ -142,6 +181,15 @@ def test_ingest_tarball_sorts_and_counts(tmp_path):
 def test_ingest_tarball_rejects_non_numeric_member(tmp_path):
     tgz = make_tgz(tmp_path / "bad.tgz", {"athome4_test/README": "not a doc\n"})
     with pytest.raises(ValueError, match="not a numeric doc id"):
+        ingest_tarball(tgz, expected_count=None)
+
+
+def test_ingest_tarball_rejects_duplicate_docnos(tmp_path):
+    tgz = make_tgz(
+        tmp_path / "dup.tgz",
+        {"a/000001": "first\n", "b/000001": "second\n"},
+    )
+    with pytest.raises(ValueError, match="duplicate doc numbers"):
         ingest_tarball(tgz, expected_count=None)
 
 
@@ -175,3 +223,69 @@ def test_build_idmap_and_coverage(tmp_path):
     assert report["topics"]["401"] == {"judged": 2, "mapped": 2, "coverage": 1.0}
     assert report["topics"]["402"]["coverage"] == 0.0
     assert report["overall"] == {"judged": 3, "mapped": 2, "coverage": round(2 / 3, 6)}
+
+
+# -- main() orchestration: the coverage-gate exit code IS the P1 gate --------
+
+def make_main_env(tmp_path, monkeypatch, docs, qrel_rows, expected_count):
+    from argparse import Namespace
+
+    import pipeline.ingest.athome as athome_mod
+    from pipeline.config import CorpusConfig, PipelineConfig
+    from pipeline.store import QRELS_RAW, write_table
+
+    raw = tmp_path / "raw"
+    (raw / "bush").mkdir(parents=True)
+    make_tgz(raw / "bush" / "athome4_sample.tgz", docs)
+    paths = {
+        "raw": raw, "store": tmp_path / "store", "artifacts": tmp_path / "artifacts",
+        "batches": tmp_path / "b", "decisions": tmp_path / "d",
+        "spend": tmp_path / "s", "productions": tmp_path / "p",
+    }
+    cfg = PipelineConfig(paths=paths, models={}, batch={}, seeds={}, sampling={},
+                         normalization_version="v1")
+    corpus_cfg = CorpusConfig(corpus="bush", format="trec-athome4-sample", files=[],
+                              chosen_topics=["401"], expected_message_count=expected_count)
+    monkeypatch.setattr(athome_mod, "load_pipeline_config", lambda: cfg)
+    monkeypatch.setattr(athome_mod, "load_corpus_config", lambda _c: corpus_cfg)
+    if qrel_rows is not None:
+        table = pa.table(
+            {
+                "corpus": ["bush"] * len(qrel_rows),
+                "topic": [t for t, _, _ in qrel_rows],
+                "trec_doc_id": [d for _, d, _ in qrel_rows],
+                "relevance": [r for _, _, r in qrel_rows],
+                "stratum": [None] * len(qrel_rows),
+                "sampling_weight": [None] * len(qrel_rows),
+            }
+        ).cast(QRELS_RAW)
+        write_table(paths["store"], "bush", "qrels_raw", table)
+    return athome_mod, Namespace(corpus="bush", force=False), paths
+
+
+def test_main_green_gate_exit_0(tmp_path, monkeypatch, capsys):
+    docs = {"athome4_test/000001": SYNTH_DOC, "athome4_test/000002": "plain\n"}
+    athome_mod, args, paths = make_main_env(
+        tmp_path, monkeypatch, docs, [("401", "000001", 1), ("401", "000002", 0)], 2
+    )
+    assert athome_mod.main(args) == 0
+    report = json.loads((paths["artifacts"] / "bush_idmap_coverage.json").read_text())
+    assert report["overall"]["coverage"] == 1.0
+    # resume path: second run reports done and stays green
+    assert athome_mod.main(args) == 0
+    assert "already done" in capsys.readouterr().out
+
+
+def test_main_incomplete_coverage_exit_1(tmp_path, monkeypatch):
+    docs = {"athome4_test/000001": "a\n"}
+    athome_mod, args, _ = make_main_env(
+        tmp_path, monkeypatch, docs, [("401", "000001", 1), ("401", "999999", 1)], 1
+    )
+    assert athome_mod.main(args) == 1
+
+
+def test_main_missing_qrels_exit_2(tmp_path, monkeypatch):
+    athome_mod, args, _ = make_main_env(
+        tmp_path, monkeypatch, {"athome4_test/000001": "a\n"}, None, 1
+    )
+    assert athome_mod.main(args) == 2
