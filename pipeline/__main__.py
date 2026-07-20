@@ -12,12 +12,12 @@ from datetime import datetime, timezone
 
 from . import acquire as acquire_mod
 from .config import load_budget_config, load_pipeline_config
+from .ingest import athome as ingest_mod
 from .qrels import devset as devset_mod
 from .qrels import parse as qrels_mod
 from .store import TABLES, table_path
 
 NOT_IMPLEMENTED = {
-    "ingest": "P1 (bush) / P4 (enron)",
     "preprocess": "P4",
     "review": "P2",
     "privilege": "P6",
@@ -99,6 +99,11 @@ def build_parser() -> argparse.ArgumentParser:
     p_acquire.add_argument("--corpus", required=True, choices=["bush", "enron"])
     p_acquire.add_argument("--verify-only", action="store_true")
     p_acquire.set_defaults(func=cmd_acquire)
+
+    p_ingest = sub.add_parser("ingest", help="parse raw corpus files into the messages table")
+    p_ingest.add_argument("--corpus", required=True, choices=["bush", "enron"])
+    p_ingest.add_argument("--force", action="store_true")
+    p_ingest.set_defaults(func=ingest_mod.main)
 
     p_qrels = sub.add_parser("qrels", help="parse relevance judgments into qrels_raw")
     p_qrels.add_argument("--corpus", required=True, choices=["bush", "enron"])

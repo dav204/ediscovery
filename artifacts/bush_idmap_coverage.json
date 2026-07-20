@@ -1,0 +1,56 @@
+{
+  "corpus": "bush",
+  "match_method": "filename",
+  "overall": {
+    "coverage": 1.0,
+    "judged": 14428,
+    "mapped": 14428
+  },
+  "topics": {
+    "401": {
+      "coverage": 1.0,
+      "judged": 898,
+      "mapped": 898
+    },
+    "402": {
+      "coverage": 1.0,
+      "judged": 1652,
+      "mapped": 1652
+    },
+    "403": {
+      "coverage": 1.0,
+      "judged": 2254,
+      "mapped": 2254
+    },
+    "404": {
+      "coverage": 1.0,
+      "judged": 2696,
+      "mapped": 2696
+    },
+    "405": {
+      "coverage": 1.0,
+      "judged": 542,
+      "mapped": 542
+    },
+    "406": {
+      "coverage": 1.0,
+      "judged": 841,
+      "mapped": 841
+    },
+    "407": {
+      "coverage": 1.0,
+      "judged": 2719,
+      "mapped": 2719
+    },
+    "408": {
+      "coverage": 1.0,
+      "judged": 1712,
+      "mapped": 1712
+    },
+    "409": {
+      "coverage": 1.0,
+      "judged": 1114,
+      "mapped": 1114
+    }
+  }
+}

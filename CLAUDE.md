@@ -9,16 +9,16 @@ validated against TREC relevance judgments. Full plan: see `docs/PLAN.md`.
 ## Phase status
 
 - [x] P0 Scaffold + acquisition spec
-- [ ] P1 Bush ingest + qrels + dev set
-      (qrels parse + seeded dev sets done 2026-06-13 — HiCAL sample acquired +
-      sha256-pinned in `data/raw/bush/`, `qrels_raw` parquet built from
-      `athome4.qrel.sample` restricted to the 9 sample topics, byte-identical
-      dev-set artifacts committed for 401–409; ingest of `athome4_sample.tgz`
-      still pending — no longer blocked, the sample is a clean public download)
+- [x] P1 Bush ingest + qrels + dev set
+      (qrels parse + seeded dev sets 2026-06-13; ingest 2026-07-20 — 50,000
+      messages + filename idmap from `athome4_sample.tgz`, coverage artifact
+      100% of the 14,428 judged docs for 401–409, re-ingest byte-identical,
+      phase1 tests green)
 - [ ] P2 Review engine + first dev-set metrics
       (engine core built and offline-tested ahead of schedule — prompts, cost
-      caps, decision log, batch runner, tiering, metrics; gate still needs the
-      real dev-set run, which waits on corpus data + ANTHROPIC_API_KEY)
+      caps, decision log, batch runner, tiering, metrics; corpus data ready as
+      of P1; gate still needs the real dev-set run, which waits on
+      ANTHROPIC_API_KEY + human-edited `protocols/bush/athome4NN.v1.md`)
 - [ ] P3 Bush/HiCAL validation runs + 2023 comparison table (9 topics)
 - [ ] P4 Enron ingest + deterministic preprocessing
 - [ ] P5 Enron qrels mapping + topic 201 review
@@ -61,6 +61,13 @@ python -m pipeline review --corpus bush --topic 401 --tier 1 --dev-set --dry-run
 
 No attachment-content review, no OCR, no CAL/active learning, no agentic multi-pass
 review, no privilege phase for the Bush corpus, no backend for the review UI.
+
+## Code gotchas (dated; append when a mistake slips past existing rules)
+
+- 2026-07-20: never randomly access members of a `.tgz` via `tarfile.getmembers()`
+  + `extractfile` — each seek re-decompresses from the stream start (O(n²); the
+  50K-doc sample took >300s). Stream with `tarfile.open(path, "r|gz")` in archive
+  order and sort afterwards (~3s).
 
 ## Environment notes
 
