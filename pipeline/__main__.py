@@ -15,14 +15,14 @@ from .config import load_budget_config, load_pipeline_config
 from .ingest import athome as ingest_mod
 from .qrels import devset as devset_mod
 from .qrels import parse as qrels_mod
+from .review import run as review_mod
 from .store import TABLES, table_path
+from .validate import run as validate_mod
 
 NOT_IMPLEMENTED = {
     "preprocess": "P4",
-    "review": "P2",
     "privilege": "P6",
     "produce": "P7",
-    "validate": "P2",
     "ui": "P8",
 }
 
@@ -113,6 +113,21 @@ def build_parser() -> argparse.ArgumentParser:
     p_devset.add_argument("--corpus", required=True, choices=["bush", "enron"])
     p_devset.add_argument("--topic", help="default: all chosen_topics from the corpus config")
     p_devset.set_defaults(func=devset_mod.main)
+
+    p_review = sub.add_parser("review", help="tiered LLM responsiveness review (cost-gated)")
+    p_review.add_argument("--corpus", required=True, choices=["bush", "enron"])
+    p_review.add_argument("--topic", required=True)
+    p_review.add_argument("--tier", type=int, choices=[1, 2], default=1)
+    p_review.add_argument("--phase", choices=["responsiveness", "qc"], default="responsiveness")
+    p_review.add_argument("--dev-set", action="store_true")
+    p_review.add_argument("--dry-run", action="store_true")
+    p_review.set_defaults(func=review_mod.main)
+
+    p_validate = sub.add_parser("validate", help="score decisions against qrels")
+    p_validate.add_argument("--corpus", required=True, choices=["bush", "enron"])
+    p_validate.add_argument("--topic", required=True)
+    p_validate.add_argument("--dev-set", action="store_true")
+    p_validate.set_defaults(func=validate_mod.main)
 
     sub.add_parser("status", help="phase/artifact dashboard").set_defaults(func=cmd_status)
     sub.add_parser("spend", help="budget burn vs caps").set_defaults(func=cmd_spend)

@@ -119,3 +119,20 @@ def scored_doc_ids(df: pd.DataFrame, *, topic: str, phase: str, tier: int,
         & (cur["prompt_version"] == prompt_version)
     )
     return set(cur[mask]["doc_id"])
+
+
+def current_doc_ids(df: pd.DataFrame, *, topic: str, phase: str,
+                    prompt_version: str) -> set[str]:
+    """Docs with a current decision at ANY tier. Tier-1 candidate selection
+    must use this, not scored_doc_ids: a tier-1 decision superseded by tier-2
+    is no longer current, and re-reviewing that doc at tier 1 would both pay
+    again and mint a second co-current decision."""
+    if df.empty:
+        return set()
+    cur = current(df)
+    mask = (
+        (cur["topic"].astype(str) == str(topic))
+        & (cur["phase"] == phase)
+        & (cur["prompt_version"] == prompt_version)
+    )
+    return set(cur[mask]["doc_id"])

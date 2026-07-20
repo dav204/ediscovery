@@ -57,7 +57,11 @@ def evaluate(decisions: pd.DataFrame, qrels: pd.DataFrame, *, topic: str,
     if (q["sampling_weight"] <= 0).any():
         raise ValueError("non-positive sampling_weight in qrels")
 
-    merged = q.merge(decisions[["doc_id", "decision"]], on="doc_id", how="left")
+    # m:1 guard: a doc with two current decisions (e.g. an unfiltered protocol
+    # version mix) would silently fan out and double-count in the matrix.
+    merged = q.merge(
+        decisions[["doc_id", "decision"]], on="doc_id", how="left", validate="m:1"
+    )
     evaluated = merged[merged["decision"].notna()]
     produced = evaluated["decision"].isin(PRODUCED)
     w = evaluated["sampling_weight"]

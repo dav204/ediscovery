@@ -85,6 +85,29 @@ def chunk(items: list, size: int) -> list[list]:
     return [items[i : i + size] for i in range(0, len(items), size)]
 
 
+def _doc_tokens(candidates: list[dict]) -> int:
+    return sum(int(d.get("token_estimate") or 0) for d in candidates)
+
+
+def _prompt_tokens(protocol: Protocol) -> int:
+    return max(1, len(protocol.content) // 4)
+
+
+def estimate_run(candidates: list[dict], protocol: Protocol, run: RunConfig,
+                 budget: BudgetConfig) -> cost_mod.CostEstimate:
+    """The run-level projection shown at dry-run time. Derives from the same
+    token accounting run_batches enforces per chunk, so the number a human
+    approves is the number the cap check uses."""
+    return cost_mod.estimate(
+        n_requests=len(candidates),
+        doc_tokens=_doc_tokens(candidates),
+        prompt_tokens=_prompt_tokens(protocol),
+        max_output_tokens=run.max_output_tokens,
+        model=run.model,
+        budget=budget,
+    )
+
+
 def run_batches(
     candidates: list[dict],
     protocol: Protocol,
@@ -102,8 +125,8 @@ def run_batches(
     further chunks are submitted but already-submitted batches are drained.
     """
     requests = build_requests(candidates, protocol, run)
-    doc_tokens = sum(int(d.get("token_estimate") or 0) for d in candidates)
-    prompt_tokens = max(1, len(protocol.content) // 4)
+    doc_tokens = _doc_tokens(candidates)
+    prompt_tokens = _prompt_tokens(protocol)
 
     out = {"decisions": [], "failures": [], "batch_ids": [], "stopped_early": False}
     batches_dir.mkdir(parents=True, exist_ok=True)

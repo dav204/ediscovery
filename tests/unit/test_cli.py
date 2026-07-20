@@ -16,7 +16,7 @@ def test_parser_has_all_commands():
 
 
 def test_stub_commands_exit_2(capsys):
-    args = build_parser().parse_args(["review", "--corpus", "bush", "--topic", "athome102", "--tier", "1"])
+    args = build_parser().parse_args(["privilege", "--corpus", "enron", "--topic", "201"])
     assert args.func(args) == 2
     assert "not implemented" in capsys.readouterr().err
 
