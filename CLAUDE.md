@@ -21,6 +21,11 @@ validated against TREC relevance judgments. Full plan: see `docs/PLAN.md`.
       ANTHROPIC_API_KEY + human-edited `protocols/bush/athome4NN.v1.md`)
 - [ ] P3 Bush/HiCAL validation runs + 2023 comparison table (9 topics)
 - [ ] P4 Enron ingest + deterministic preprocessing
+      (ingest done 2026-07-21 — 101,860 messages from the v2 XML zips, 0 parse
+      failures, filename idmap on EDRM DocIDs, byte-identical re-runs;
+      preprocessing — dedup/threading/inclusive — still pending. NOTE for P5:
+      qrels judge attachment parts as separate docids, fold-vs-exclude decision
+      recorded in PLAN.md P5, decide before reading the coverage gate)
 - [ ] P5 Enron qrels mapping + topic 201 review
 - [ ] P6 Privilege review (Enron)
 - [ ] P7 Production (PDF/redaction/Bates/load files)

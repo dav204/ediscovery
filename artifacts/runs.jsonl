@@ -26,3 +26,10 @@
 {"ts": "2026-07-20T21:42:14.749789+00:00", "command": "acquire", "argv": ["acquire", "--corpus", "enron", "--verify-only"], "exit_code": 0}
 {"ts": "2026-07-20T21:52:34.968853+00:00", "command": "ingest", "argv": ["ingest", "--corpus", "bush", "--force"], "exit_code": 0}
 {"ts": "2026-07-20T21:52:39.551591+00:00", "command": "ingest", "argv": ["ingest", "--corpus", "bush", "--force"], "exit_code": 0}
+{"ts": "2026-07-20T21:54:27.626784+00:00", "command": "status", "argv": ["status"], "exit_code": 0}
+{"ts": "2026-07-21T17:06:28.598381+00:00", "command": "ingest", "argv": ["ingest", "--corpus", "enron"], "exit_code": 1}
+{"ts": "2026-07-21T17:10:48.039927+00:00", "command": "ingest", "argv": ["ingest", "--corpus", "enron", "--force"], "exit_code": 0}
+{"ts": "2026-07-21T17:13:20.904864+00:00", "command": "ingest", "argv": ["ingest", "--corpus", "enron", "--force"], "exit_code": 0}
+{"ts": "2026-07-21T17:35:51.495058+00:00", "command": "ingest", "argv": ["ingest", "--corpus", "enron", "--force"], "exit_code": 0}
+{"ts": "2026-07-21T17:38:11.122581+00:00", "command": "ingest", "argv": ["ingest", "--corpus", "enron", "--force"], "exit_code": 0}
+{"ts": "2026-07-21T17:38:12.309621+00:00", "command": "ingest", "argv": ["ingest", "--corpus", "enron"], "exit_code": 0}

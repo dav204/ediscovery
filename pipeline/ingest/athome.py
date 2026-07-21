@@ -269,9 +269,6 @@ def rows_to_messages_table(rows: list[dict]) -> pa.Table:
 
 
 def main(args) -> int:
-    if args.corpus != "bush":
-        print("ingest: only --corpus bush is implemented (enron is P4)", file=sys.stderr)
-        return 2
     cfg = load_pipeline_config()
     corpus_cfg = load_corpus_config(args.corpus)
     store_root = cfg.paths["store"]

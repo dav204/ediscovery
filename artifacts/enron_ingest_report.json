@@ -1,0 +1,13 @@
+{
+  "corpus": "enron",
+  "failure_items": [],
+  "failure_rate": 0.0,
+  "failures": 0,
+  "gate": 0.01,
+  "messages": 101860,
+  "per_custodian": {
+    "kaminski-v": 55277,
+    "lay-k": 14764,
+    "skilling-j": 31819
+  }
+}
