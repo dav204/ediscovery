@@ -1,0 +1,26 @@
+{
+  "boilerplate_bodies": 4,
+  "canonical_docs": 24778,
+  "corpus": "enron",
+  "exact_dup_docs": 77082,
+  "inclusive": {
+    "attachment_unique": 22,
+    "terminal_node": 20318,
+    "unique_content": 2338
+  },
+  "inclusive_docs": 22678,
+  "messages": 101860,
+  "near_clusters": 1894,
+  "near_dup_docs": 4688,
+  "params": {
+    "boilerplate_body_min_repeats": 50,
+    "minhash_num_perm": 128,
+    "near_dup_min_body_words": 30,
+    "near_dup_threshold": 0.85,
+    "seed": 8191,
+    "shingle_words": 3,
+    "thread_max_gap_days": 60
+  },
+  "singleton_threads": 18142,
+  "threads": 20318
+}

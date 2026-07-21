@@ -111,7 +111,7 @@ CLAUDE.md hard rules: never commit `data/`; never quote bystander email content 
 
 - **messages**: doc_id, corpus, custodian, source_file, source_index, message_id_hdr?, in_reply_to?, references[], from_addr/from_name, to/cc/bcc[], subject, subject_norm, date_utc?, date_raw, body_text, body_norm, body_hash, has_attachments, attachment_count, attachment_names[], headers_json, parse_warnings[], token_estimate.
 - **doc_id rule** (`ids.py`): `{corpus}-{sha256(source_file+':'+source_index)[:16]}` — stable across re-ingest; TREC IDs live only in the mapping table.
-- **dedup_exact / dedup_near**: body_hash / MinHash cluster_id → canonical_doc_id (deterministic: earliest date, lowest doc_id).
+- **dedup_exact / dedup_near**: dedup_key / MinHash cluster_id → canonical_doc_id (deterministic: earliest date, lowest doc_id). **Amended 2026-07-21:** exact key = sha256(subject_norm + body_norm), not body-only — 45% of the Enron v2 export shares one 345-char placeholder body (calendar/notes/discussion-thread items whose subjects differ), so body-only clustering collapses distinct documents. Near-dup shingles bodies but skips boilerplate bodies (frequency ≥ config threshold) and very short bodies.
 - **threads**: doc_id, thread_id, parent_doc_id?, depth, method (jwz|subject_fallback|containment|singleton), is_inclusive, inclusive_reason.
 - **qrels_raw**: corpus, topic, trec_doc_id, relevance, stratum?, sampling_weight? (TREC 2010 = sampled; athome ≈ complete).
 - **doc_id_map** (risk-management table): doc_id ↔ trec_doc_id, match_method (filename|message_id|hash|tuple_fuzzy), confidence, ambiguous. Matcher cascade in `qrels/idmap.py`; every run emits `artifacts/{corpus}_idmap_coverage.json`.

@@ -20,12 +20,17 @@ validated against TREC relevance judgments. Full plan: see `docs/PLAN.md`.
       of P1; gate still needs the real dev-set run, which waits on
       ANTHROPIC_API_KEY + human-edited `protocols/bush/athome4NN.v1.md`)
 - [ ] P3 Bush/HiCAL validation runs + 2023 comparison table (9 topics)
-- [ ] P4 Enron ingest + deterministic preprocessing
-      (ingest done 2026-07-21 — 101,860 messages from the v2 XML zips, 0 parse
-      failures, filename idmap on EDRM DocIDs, byte-identical re-runs;
-      preprocessing — dedup/threading/inclusive — still pending. NOTE for P5:
-      qrels judge attachment parts as separate docids, fold-vs-exclude decision
-      recorded in PLAN.md P5, decide before reading the coverage gate)
+- [x] P4 Enron ingest + deterministic preprocessing
+      (ingest 2026-07-21 — 101,860 messages from the v2 XML zips, 0 parse
+      failures, filename idmap on EDRM DocIDs; preprocessing 2026-07-21 —
+      24,778 canonical docs (subject+body exact key; 45% of the corpus shares
+      one placeholder body), star-clustered near-dups with the
+      jaccard>=threshold invariant, gap-split subject threading (no
+      In-Reply-To exists in this corpus), quote-collapsed inclusive detection
+      -> 22,678 inclusive; all tables byte-identical on re-run, phase4 tests
+      green. NOTE for P5: qrels judge attachment parts as separate docids,
+      fold-vs-exclude decision recorded in PLAN.md P5, decide before reading
+      the coverage gate)
 - [ ] P5 Enron qrels mapping + topic 201 review
 - [ ] P6 Privilege review (Enron)
 - [ ] P7 Production (PDF/redaction/Bates/load files)

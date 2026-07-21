@@ -23,6 +23,15 @@ seeds:
   devset: 42
   qc_sample: 1337
   elusion: 7
+  minhash: 8191
+
+preprocess:
+  minhash_num_perm: 128
+  near_dup_threshold: 0.85
+  shingle_words: 3
+  near_dup_min_body_words: 30     # short bodies are cheap to review; skip
+  boilerplate_body_min_repeats: 50  # bodies this common are export boilerplate
+  thread_max_gap_days: 60         # same-subject gap that splits conversations
 
 sampling:
   devset_per_topic_max: 500

@@ -43,7 +43,10 @@ MESSAGES = pa.schema(
 
 DEDUP_EXACT = pa.schema(
     [
-        ("body_hash", pa.string()),
+        # sha256(subject_norm + "\x00" + body_norm) — NOT body-only: 45% of the
+        # Enron v2 export shares one placeholder body (calendar/notes items),
+        # so body-only clustering would collapse distinct documents (2026-07-21).
+        ("dedup_key", pa.string()),
         ("canonical_doc_id", pa.string()),
         ("doc_id", pa.string()),
         ("dup_rank", pa.int32()),
