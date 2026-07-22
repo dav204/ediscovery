@@ -16,6 +16,7 @@ from .ingest import athome as athome_mod
 from .ingest import edrm_xml as edrm_mod
 from .preprocess import run as preprocess_mod
 from .qrels import devset as devset_mod
+from .qrels import enron as qrels_enron_mod
 from .qrels import parse as qrels_mod
 from .review import run as review_mod
 from .store import TABLES, table_path
@@ -115,7 +116,9 @@ def build_parser() -> argparse.ArgumentParser:
 
     p_qrels = sub.add_parser("qrels", help="parse relevance judgments into qrels_raw")
     p_qrels.add_argument("--corpus", required=True, choices=["bush", "enron"])
-    p_qrels.set_defaults(func=qrels_mod.main)
+    p_qrels.set_defaults(
+        func=lambda args: (qrels_mod if args.corpus == "bush" else qrels_enron_mod).main(args)
+    )
 
     p_devset = sub.add_parser("devset", help="build seeded stratified dev sets")
     p_devset.add_argument("--corpus", required=True, choices=["bush", "enron"])

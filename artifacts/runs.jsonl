@@ -38,3 +38,6 @@
 {"ts": "2026-07-21T21:36:47.316810+00:00", "command": "preprocess", "argv": ["preprocess", "--corpus", "enron"], "exit_code": 0}
 {"ts": "2026-07-21T21:54:30.003698+00:00", "command": "preprocess", "argv": ["preprocess", "--corpus", "enron", "--force"], "exit_code": 0}
 {"ts": "2026-07-21T21:55:07.857751+00:00", "command": "preprocess", "argv": ["preprocess", "--corpus", "enron", "--force"], "exit_code": 0}
+{"ts": "2026-07-22T17:27:00.426910+00:00", "command": "acquire", "argv": ["acquire", "--corpus", "enron"], "exit_code": 0}
+{"ts": "2026-07-22T17:31:28.738809+00:00", "command": "qrels", "argv": ["qrels", "--corpus", "enron"], "exit_code": 0}
+{"ts": "2026-07-22T17:39:09.877079+00:00", "command": "qrels", "argv": ["qrels", "--corpus", "enron"], "exit_code": 0}

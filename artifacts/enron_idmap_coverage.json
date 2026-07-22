@@ -1,0 +1,545 @@
+{
+  "corpus": "enron",
+  "notes": {
+    "estimated_r": "cell-weighted estimate from THIS qrels file; calc1_published is the toolkit's comment value.",
+    "policies": "raw = message docids only; fold_to_parent = part docids fold to their message; exclude_parts = part docids dropped. Decision recorded in docs/PLAN.md P5 \u2014 pick before any token spend."
+  },
+  "topics": {
+    "200": {
+      "calc1_published_r": 2543.52,
+      "estimated_r": 2543.52,
+      "judged": 2720,
+      "per_custodian_fold": {
+        "kaminski-v": {
+          "judged": 67,
+          "relevant": 1
+        },
+        "lay-k": {
+          "judged": 35,
+          "relevant": 2
+        },
+        "skilling-j": {
+          "judged": 52,
+          "relevant": 3
+        }
+      },
+      "policies": {
+        "exclude_parts": {
+          "coverage": 0.056676,
+          "coverage_rel": 0.024896,
+          "covered": 118,
+          "covered_rel": 6,
+          "judged": 2082,
+          "relevant": 241
+        },
+        "fold_to_parent": {
+          "coverage": 0.056618,
+          "coverage_rel": 0.022989,
+          "covered": 154,
+          "covered_rel": 6,
+          "judged": 2720,
+          "relevant": 261
+        },
+        "raw": {
+          "coverage": 0.043382,
+          "coverage_rel": 0.022989,
+          "covered": 118,
+          "covered_rel": 6,
+          "judged": 2720,
+          "relevant": 261
+        }
+      },
+      "relevant": 261,
+      "relevant_by_custodian_full": {
+        "custodians_with_relevant": 67,
+        "top": {
+          "allen-p": 6,
+          "bass-e": 10,
+          "campbell-l": 7,
+          "dasovich-j": 6,
+          "dorland-c": 31,
+          "germany-c": 5,
+          "guzman-m": 6,
+          "jones-t": 24,
+          "mann-k": 6,
+          "mckay-j": 17,
+          "nemec-g": 8,
+          "ruscitti-k": 14,
+          "scott-s": 10,
+          "shankman-j": 7,
+          "symes-k": 7
+        },
+        "unmapped_relevant": 0
+      }
+    },
+    "201": {
+      "calc1_published_r": 2366.28,
+      "estimated_r": 1885.94,
+      "judged": 2720,
+      "per_custodian_fold": {
+        "kaminski-v": {
+          "judged": 67,
+          "relevant": 10
+        },
+        "lay-k": {
+          "judged": 22,
+          "relevant": 0
+        },
+        "skilling-j": {
+          "judged": 23,
+          "relevant": 0
+        }
+      },
+      "policies": {
+        "exclude_parts": {
+          "coverage": 0.046748,
+          "coverage_rel": 0.00578,
+          "covered": 69,
+          "covered_rel": 1,
+          "judged": 1476,
+          "relevant": 173
+        },
+        "fold_to_parent": {
+          "coverage": 0.041176,
+          "coverage_rel": 0.026042,
+          "covered": 112,
+          "covered_rel": 10,
+          "judged": 2720,
+          "relevant": 384
+        },
+        "raw": {
+          "coverage": 0.025368,
+          "coverage_rel": 0.002604,
+          "covered": 69,
+          "covered_rel": 1,
+          "judged": 2720,
+          "relevant": 384
+        }
+      },
+      "relevant": 384,
+      "relevant_by_custodian_full": {
+        "custodians_with_relevant": 33,
+        "top": {
+          "bailey-s": 3,
+          "brawner-s": 4,
+          "griffith-j": 51,
+          "haedicke-m": 5,
+          "heard-m": 10,
+          "hodge-j": 6,
+          "jones-t": 64,
+          "kaminski-v": 10,
+          "kitchen-l": 6,
+          "sager-e": 4,
+          "shackleton-s": 147,
+          "stclair-c": 7,
+          "taylor-m": 33,
+          "weldon-c": 6,
+          "white-s": 4
+        },
+        "unmapped_relevant": 0
+      }
+    },
+    "202": {
+      "calc1_published_r": 4615.27,
+      "estimated_r": 6312.37,
+      "judged": 2720,
+      "per_custodian_fold": {
+        "kaminski-v": {
+          "judged": 150,
+          "relevant": 96
+        },
+        "lay-k": {
+          "judged": 20,
+          "relevant": 2
+        },
+        "skilling-j": {
+          "judged": 34,
+          "relevant": 5
+        }
+      },
+      "policies": {
+        "exclude_parts": {
+          "coverage": 0.05887,
+          "coverage_rel": 0.040984,
+          "covered": 74,
+          "covered_rel": 5,
+          "judged": 1257,
+          "relevant": 122
+        },
+        "fold_to_parent": {
+          "coverage": 0.075,
+          "coverage_rel": 0.103414,
+          "covered": 204,
+          "covered_rel": 103,
+          "judged": 2720,
+          "relevant": 996
+        },
+        "raw": {
+          "coverage": 0.027206,
+          "coverage_rel": 0.00502,
+          "covered": 74,
+          "covered_rel": 5,
+          "judged": 2720,
+          "relevant": 996
+        }
+      },
+      "relevant": 996,
+      "relevant_by_custodian_full": {
+        "custodians_with_relevant": 28,
+        "top": {
+          "beck-s": 2,
+          "buy-r": 26,
+          "davis-d": 3,
+          "derrick-j": 4,
+          "fischer-m2": 5,
+          "haedicke-m": 4,
+          "hayslett-r": 4,
+          "kaminski-v": 96,
+          "kitchen-l": 4,
+          "mann-k": 4,
+          "shackleton-s": 767,
+          "skilling-j": 5,
+          "stclair-c": 10,
+          "taylor-m": 5,
+          "whalley-g": 38
+        },
+        "unmapped_relevant": 0
+      }
+    },
+    "203": {
+      "calc1_published_r": 4944.23,
+      "estimated_r": 3124.62,
+      "judged": 2720,
+      "per_custodian_fold": {
+        "kaminski-v": {
+          "judged": 147,
+          "relevant": 12
+        },
+        "lay-k": {
+          "judged": 32,
+          "relevant": 4
+        },
+        "skilling-j": {
+          "judged": 41,
+          "relevant": 4
+        }
+      },
+      "policies": {
+        "exclude_parts": {
+          "coverage": 0.066798,
+          "coverage_rel": 0.035556,
+          "covered": 102,
+          "covered_rel": 8,
+          "judged": 1527,
+          "relevant": 225
+        },
+        "fold_to_parent": {
+          "coverage": 0.080882,
+          "coverage_rel": 0.04158,
+          "covered": 220,
+          "covered_rel": 20,
+          "judged": 2720,
+          "relevant": 481
+        },
+        "raw": {
+          "coverage": 0.0375,
+          "coverage_rel": 0.016632,
+          "covered": 102,
+          "covered_rel": 8,
+          "judged": 2720,
+          "relevant": 481
+        }
+      },
+      "relevant": 481,
+      "relevant_by_custodian_full": {
+        "custodians_with_relevant": 108,
+        "top": {
+          "beck-s": 30,
+          "dasovich-j": 20,
+          "dorland-c": 15,
+          "fossum-d": 9,
+          "geaccone-t": 28,
+          "hayslett-r": 17,
+          "kaminski-v": 12,
+          "kean-s": 29,
+          "kitchen-l": 42,
+          "lokay-m": 22,
+          "martin-t": 17,
+          "mccarty-d": 9,
+          "rogers-b": 30,
+          "shankman-j": 7,
+          "whalley-g": 14
+        },
+        "unmapped_relevant": 0
+      }
+    },
+    "204": {
+      "calc1_published_r": 6361.83,
+      "estimated_r": 6361.83,
+      "judged": 2720,
+      "per_custodian_fold": {
+        "kaminski-v": {
+          "judged": 93,
+          "relevant": 24
+        },
+        "lay-k": {
+          "judged": 24,
+          "relevant": 0
+        },
+        "skilling-j": {
+          "judged": 40,
+          "relevant": 10
+        }
+      },
+      "policies": {
+        "exclude_parts": {
+          "coverage": 0.061637,
+          "coverage_rel": 0.080103,
+          "covered": 125,
+          "covered_rel": 31,
+          "judged": 2028,
+          "relevant": 387
+        },
+        "fold_to_parent": {
+          "coverage": 0.057721,
+          "coverage_rel": 0.071579,
+          "covered": 157,
+          "covered_rel": 34,
+          "judged": 2720,
+          "relevant": 475
+        },
+        "raw": {
+          "coverage": 0.045956,
+          "coverage_rel": 0.065263,
+          "covered": 125,
+          "covered_rel": 31,
+          "judged": 2720,
+          "relevant": 475
+        }
+      },
+      "relevant": 475,
+      "relevant_by_custodian_full": {
+        "custodians_with_relevant": 106,
+        "top": {
+          "bailey-s": 11,
+          "baughman-d": 9,
+          "dasovich-j": 14,
+          "davis-d": 7,
+          "haedicke-m": 31,
+          "jones-t": 22,
+          "kaminski-v": 24,
+          "kitchen-l": 7,
+          "martin-t": 19,
+          "salisbury-h": 11,
+          "sanders-r": 67,
+          "skilling-j": 10,
+          "swerzbin-m": 12,
+          "taylor-m": 16,
+          "watson-k": 8
+        },
+        "unmapped_relevant": 0
+      }
+    },
+    "205": {
+      "calc1_published_r": 67438.43,
+      "estimated_r": 67937.95,
+      "judged": 2720,
+      "per_custodian_fold": {
+        "kaminski-v": {
+          "judged": 101,
+          "relevant": 49
+        },
+        "lay-k": {
+          "judged": 20,
+          "relevant": 2
+        },
+        "skilling-j": {
+          "judged": 25,
+          "relevant": 3
+        }
+      },
+      "policies": {
+        "exclude_parts": {
+          "coverage": 0.05153,
+          "coverage_rel": 0.014599,
+          "covered": 64,
+          "covered_rel": 4,
+          "judged": 1242,
+          "relevant": 274
+        },
+        "fold_to_parent": {
+          "coverage": 0.053676,
+          "coverage_rel": 0.039531,
+          "covered": 146,
+          "covered_rel": 54,
+          "judged": 2720,
+          "relevant": 1366
+        },
+        "raw": {
+          "coverage": 0.023529,
+          "coverage_rel": 0.002928,
+          "covered": 64,
+          "covered_rel": 4,
+          "judged": 2720,
+          "relevant": 1366
+        }
+      },
+      "relevant": 1366,
+      "relevant_by_custodian_full": {
+        "custodians_with_relevant": 91,
+        "top": {
+          "campbell-l": 12,
+          "dasovich-j": 429,
+          "ermis-f": 22,
+          "fossum-d": 11,
+          "gilbertsmith-d": 47,
+          "guzman-m": 11,
+          "hain-m": 31,
+          "hyvl-d": 12,
+          "kaminski-v": 49,
+          "kean-s": 290,
+          "kitchen-l": 19,
+          "nemec-g": 18,
+          "sanders-r": 29,
+          "shapiro-r": 91,
+          "steffes-j": 22
+        },
+        "unmapped_relevant": 0
+      }
+    },
+    "206": {
+      "calc1_published_r": 929.09,
+      "estimated_r": 866.16,
+      "judged": 2720,
+      "per_custodian_fold": {
+        "kaminski-v": {
+          "judged": 194,
+          "relevant": 8
+        },
+        "lay-k": {
+          "judged": 39,
+          "relevant": 2
+        },
+        "skilling-j": {
+          "judged": 67,
+          "relevant": 3
+        }
+      },
+      "policies": {
+        "exclude_parts": {
+          "coverage": 0.076869,
+          "coverage_rel": 0.044248,
+          "covered": 110,
+          "covered_rel": 5,
+          "judged": 1431,
+          "relevant": 113
+        },
+        "fold_to_parent": {
+          "coverage": 0.110294,
+          "coverage_rel": 0.096296,
+          "covered": 300,
+          "covered_rel": 13,
+          "judged": 2720,
+          "relevant": 135
+        },
+        "raw": {
+          "coverage": 0.040441,
+          "coverage_rel": 0.037037,
+          "covered": 110,
+          "covered_rel": 5,
+          "judged": 2720,
+          "relevant": 135
+        }
+      },
+      "relevant": 135,
+      "relevant_by_custodian_full": {
+        "custodians_with_relevant": 49,
+        "top": {
+          "beck-s": 3,
+          "brawner-s": 3,
+          "dasovich-j": 3,
+          "giron-d": 4,
+          "kaminski-v": 8,
+          "keavey-p": 3,
+          "kitchen-l": 17,
+          "love-p": 3,
+          "martin-t": 8,
+          "mccarty-d": 4,
+          "mckay-b": 5,
+          "rogers-b": 4,
+          "skilling-j": 3,
+          "tholt-j": 3,
+          "whalley-g": 16
+        },
+        "unmapped_relevant": 0
+      }
+    },
+    "207": {
+      "calc1_published_r": 20929.17,
+      "estimated_r": 20929.17,
+      "judged": 2720,
+      "per_custodian_fold": {
+        "kaminski-v": {
+          "judged": 54,
+          "relevant": 1
+        },
+        "lay-k": {
+          "judged": 19,
+          "relevant": 1
+        },
+        "skilling-j": {
+          "judged": 39,
+          "relevant": 5
+        }
+      },
+      "policies": {
+        "exclude_parts": {
+          "coverage": 0.03885,
+          "coverage_rel": 0.004963,
+          "covered": 73,
+          "covered_rel": 4,
+          "judged": 1879,
+          "relevant": 806
+        },
+        "fold_to_parent": {
+          "coverage": 0.041176,
+          "coverage_rel": 0.00541,
+          "covered": 112,
+          "covered_rel": 7,
+          "judged": 2720,
+          "relevant": 1294
+        },
+        "raw": {
+          "coverage": 0.026838,
+          "coverage_rel": 0.003091,
+          "covered": 73,
+          "covered_rel": 4,
+          "judged": 2720,
+          "relevant": 1294
+        }
+      },
+      "relevant": 1294,
+      "relevant_by_custodian_full": {
+        "custodians_with_relevant": 54,
+        "top": {
+          "bass-e": 280,
+          "carson-m": 80,
+          "cuilla-m": 65,
+          "dean-c": 143,
+          "ermis-f": 55,
+          "grigsby-m": 23,
+          "lenhart-m": 112,
+          "love-p": 39,
+          "lucci-p": 21,
+          "neal-s": 48,
+          "quigley-d": 125,
+          "shively-h": 18,
+          "staab-t": 20,
+          "stepenovitch-j": 76,
+          "williams-j": 31
+        },
+        "unmapped_relevant": 0
+      }
+    }
+  }
+}

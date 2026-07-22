@@ -73,6 +73,31 @@ files:
     url: https://trec-legal.umiacs.umd.edu/corpora/trec/legal10/seed.csv
     sha256: a774f865e6ae392acbd68a3edd477d7a1b8665d6fd07c070f7795dab551f3c13             # Learning-task seed judgments
     dest: trec/seed.csv
+  # The official Learning-task participant distribution: text of ALL 685,592
+  # canonical documents (messages + attachment parts) across all 151
+  # custodians, paths keyed by source zip -> full docid->custodian map.
+  # Covers 100% of the 21,760 judged docs (verified 2026-07-22).
+  - name: trec2010-text-canonical
+    url: https://trec-legal.umiacs.umd.edu/corpora/trec/legal10/edrmv2txt-v2.tar.bz2
+    sha256: 87ae04ed6eee7dc3902c88f0029c6996466e71887b9070605c770f7975c0c06b
+    dest: trec/edrmv2txt-v2.tar.bz2
+  # NIST eval toolkit — defines the qrels field semantics + official estimator
+  - name: trec2010-eval-readme
+    url: https://trec.nist.gov/data/legal/10/readme.txt
+    sha256: 05b2842c6cc207cce9d08df8281cb5a5a97718015b6b07401c8e6e0102bdf737
+    dest: trec/eval/readme.txt
+  - name: trec2010-eval-script
+    url: https://trec.nist.gov/data/legal/10/dolegal10eval.sh
+    sha256: dd47d52f9f0e414f8a8eeb7e29bc5d2d2d84bff31da66717cca3dd4010015fab
+    dest: trec/eval/dolegal10eval.sh
+  - name: trec2010-eval-calc1
+    url: https://trec.nist.gov/data/legal/10/calc1.c
+    sha256: 3f1a9c664be90e525a849c85abe10a2fe0a5fe951e65f6a66b64ba23584f949e
+    dest: trec/eval/calc1.c
+  - name: trec2010-eval-calc2
+    url: https://trec.nist.gov/data/legal/10/calc2.c
+    sha256: 3da3120c8684db66df73718c431d9c38591bc3ce3af8a7234e2448e45e492334
+    dest: trec/eval/calc2.c
 
 # TREC 2010 Legal Learning task judgments are sampled/stratified — metrics must
 # use strata weights (see plan). UMD also hosts edrmv2txt-v2.tar.bz2 (dedup
