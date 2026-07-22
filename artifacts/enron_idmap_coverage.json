@@ -2,6 +2,7 @@
   "corpus": "enron",
   "notes": {
     "estimated_r": "cell-weighted estimate from THIS qrels file; calc1_published is the toolkit's comment value.",
+    "fold_scoring_caveat": "fold counts are ROW-level: a message and its judged parts each count once, and ~190 groups corpus-wide carry conflicting labels. A fold-policy SCORING path must first collapse to one row per parent with an explicit conflict rule (e.g. max relevance) and a stated weight convention \u2014 evaluate()'s merge permits qrels-side duplicates and would double-count otherwise. Also note the part's own text is NOT in the custodian store.",
     "policies": "raw = message docids only; fold_to_parent = part docids fold to their message; exclude_parts = part docids dropped. Decision recorded in docs/PLAN.md P5 \u2014 pick before any token spend."
   },
   "topics": {

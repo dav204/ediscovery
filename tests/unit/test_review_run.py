@@ -142,6 +142,30 @@ def test_mapped_qrels_joins_doc_ids(tmp_path):
     assert merged[merged["trec_doc_id"] == "000001"]["doc_id"].tolist() == ["bush-aaaa"]
 
 
+def test_mapped_qrels_excludes_ambiguous_idmap_rows(tmp_path):
+    store = write_store(tmp_path, ["bush-aaaa"], ["000001"])
+    ambiguous = pa.table(
+        {
+            "corpus": ["bush", "bush"],
+            "doc_id": ["bush-aaaa", "bush-bbbb"],
+            "trec_doc_id": ["000001", "000001"],   # would fan out the join
+            "match_method": ["filename", "tuple_fuzzy"],
+            "confidence": [1.0, 0.4],
+            "ambiguous": [False, True],
+        }
+    ).cast(DOC_ID_MAP)
+    write_table(store, "bush", "doc_id_map", ambiguous)
+    qrels = pa.table(
+        {
+            "corpus": ["bush"], "topic": ["401"], "trec_doc_id": ["000001"],
+            "relevance": [1], "stratum": [None], "sampling_weight": [None],
+        }
+    )
+    write_table(store, "bush", "qrels_raw", qrels)
+    merged = mapped_qrels(store, "bush")
+    assert merged["doc_id"].tolist() == ["bush-aaaa"]  # ambiguous row dropped
+
+
 # -- main() paths: dry-run safety, budget-phase mapping, idempotent resume ----
 
 def make_cli_env(tmp_path, monkeypatch):

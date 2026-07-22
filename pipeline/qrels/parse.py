@@ -76,9 +76,6 @@ def parse_bush(raw_root: Path) -> pa.Table:
 
 
 def main(args) -> int:
-    if args.corpus != "bush":
-        print("qrels: only --corpus bush is implemented (enron is P5)", file=sys.stderr)
-        return 2
     cfg = load_pipeline_config()
     table = parse_bush(cfg.paths["raw"])
     path = write_table(cfg.paths["store"], args.corpus, "qrels_raw", table)

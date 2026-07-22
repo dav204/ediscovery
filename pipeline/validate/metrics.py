@@ -10,6 +10,13 @@ a current decision. Docs the model called `borderline` that never got a tier-2
 decision count as not-produced (conservative: hurts recall if they were
 relevant). Coverage numbers are reported alongside so the denominator is
 always explicit.
+
+weighted=True is valid ONLY when every judged doc in the topic has a decision:
+the Horvitz-Thompson weights are inclusion weights for the FULL TREC sample,
+and evaluating a subsample drawn by relevance grade (the dev-set scheme)
+re-weights relevant vs nonrelevant docs differentially — for Enron topic 201
+the default dev draw would inflate weighted precision odds ~2.6x. evaluate()
+raises rather than returning a silently biased number.
 """
 
 from dataclasses import dataclass, field
@@ -63,6 +70,12 @@ def evaluate(decisions: pd.DataFrame, qrels: pd.DataFrame, *, topic: str,
         decisions[["doc_id", "decision"]], on="doc_id", how="left", validate="m:1"
     )
     evaluated = merged[merged["decision"].notna()]
+    if weighted and len(evaluated) < len(merged):
+        raise ValueError(
+            f"weighted evaluation needs a decision for every judged doc "
+            f"({len(merged) - len(evaluated)} of {len(merged)} missing for topic "
+            f"{topic!r}); a grade-stratified subsample biases the estimate"
+        )
     produced = evaluated["decision"].isin(PRODUCED)
     w = evaluated["sampling_weight"]
 

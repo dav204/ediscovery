@@ -24,11 +24,15 @@ from .metrics import evaluate
 
 def mapped_qrels(store_root: Path, corpus: str) -> pd.DataFrame:
     """qrels_raw joined to pipeline doc_ids; unmapped judged docs are dropped
-    here but reported by the caller (coverage lives in the idmap artifact)."""
+    here but reported by the caller (coverage lives in the idmap artifact).
+    Ambiguous idmap rows are excluded and a fan-out join is a hard error —
+    a doubled row doubles that doc's sampling_weight in the matrix."""
     qrels = read_table(store_root, corpus, "qrels_raw").to_pandas()
     idmap = read_table(store_root, corpus, "doc_id_map").to_pandas()
+    idmap = idmap[~idmap["ambiguous"]]
     merged = qrels.merge(
-        idmap[["trec_doc_id", "doc_id"]], on="trec_doc_id", how="left"
+        idmap[["trec_doc_id", "doc_id"]], on="trec_doc_id", how="left",
+        validate="m:1",
     )
     merged["sampling_weight"] = merged["sampling_weight"].fillna(1.0)
     return merged

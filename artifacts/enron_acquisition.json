@@ -1,7 +1,7 @@
 {
   "corpus": "enron",
-  "verify_only": false,
-  "ran_at": "2026-07-22T17:26:55.019521+00:00",
+  "verify_only": true,
+  "ran_at": "2026-07-22T18:05:39.230067+00:00",
   "entries": {
     "skilling-j-xml": {
       "status": "verified",
@@ -43,25 +43,25 @@
       "status": "verified",
       "sha256": "a774f865e6ae392acbd68a3edd477d7a1b8665d6fd07c070f7795dab551f3c13"
     },
+    "trec2010-text-canonical": {
+      "status": "verified",
+      "sha256": "87ae04ed6eee7dc3902c88f0029c6996466e71887b9070605c770f7975c0c06b"
+    },
     "trec2010-eval-readme": {
-      "status": "present_unpinned",
-      "sha256": "05b2842c6cc207cce9d08df8281cb5a5a97718015b6b07401c8e6e0102bdf737",
-      "downloaded_from": "https://trec.nist.gov/data/legal/10/readme.txt"
+      "status": "verified",
+      "sha256": "05b2842c6cc207cce9d08df8281cb5a5a97718015b6b07401c8e6e0102bdf737"
     },
     "trec2010-eval-script": {
-      "status": "present_unpinned",
-      "sha256": "dd47d52f9f0e414f8a8eeb7e29bc5d2d2d84bff31da66717cca3dd4010015fab",
-      "downloaded_from": "https://trec.nist.gov/data/legal/10/dolegal10eval.sh"
+      "status": "verified",
+      "sha256": "dd47d52f9f0e414f8a8eeb7e29bc5d2d2d84bff31da66717cca3dd4010015fab"
     },
     "trec2010-eval-calc1": {
-      "status": "present_unpinned",
-      "sha256": "3f1a9c664be90e525a849c85abe10a2fe0a5fe951e65f6a66b64ba23584f949e",
-      "downloaded_from": "https://trec.nist.gov/data/legal/10/calc1.c"
+      "status": "verified",
+      "sha256": "3f1a9c664be90e525a849c85abe10a2fe0a5fe951e65f6a66b64ba23584f949e"
     },
     "trec2010-eval-calc2": {
-      "status": "present_unpinned",
-      "sha256": "3da3120c8684db66df73718c431d9c38591bc3ce3af8a7234e2448e45e492334",
-      "downloaded_from": "https://trec.nist.gov/data/legal/10/calc2.c"
+      "status": "verified",
+      "sha256": "3da3120c8684db66df73718c431d9c38591bc3ce3af8a7234e2448e45e492334"
     }
   }
 }

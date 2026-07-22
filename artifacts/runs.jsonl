@@ -41,3 +41,5 @@
 {"ts": "2026-07-22T17:27:00.426910+00:00", "command": "acquire", "argv": ["acquire", "--corpus", "enron"], "exit_code": 0}
 {"ts": "2026-07-22T17:31:28.738809+00:00", "command": "qrels", "argv": ["qrels", "--corpus", "enron"], "exit_code": 0}
 {"ts": "2026-07-22T17:39:09.877079+00:00", "command": "qrels", "argv": ["qrels", "--corpus", "enron"], "exit_code": 0}
+{"ts": "2026-07-22T18:05:43.066314+00:00", "command": "acquire", "argv": ["acquire", "--corpus", "enron", "--verify-only"], "exit_code": 0}
+{"ts": "2026-07-22T18:06:56.066295+00:00", "command": "qrels", "argv": ["qrels", "--corpus", "enron"], "exit_code": 0}

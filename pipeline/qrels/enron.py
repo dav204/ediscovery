@@ -155,21 +155,29 @@ def full_custodian_map(tarball: Path, cache: Path) -> dict[str, str]:
     """docid -> custodian for the ENTIRE corpus, from the official text
     distribution's member paths (`<custodian zip>/text_NNN/<docid>.txt`).
     The listing pass decompresses the whole .bz2 (~1 min), so the result is
-    cached under data/store (never committed)."""
+    cached under data/store (never committed). The cache is bound to the
+    tarball's size: a replaced tarball invalidates it rather than silently
+    feeding a stale map into the custodian-swap decision artifact."""
+    size = tarball.stat().st_size
     if cache.exists():
-        return json.loads(cache.read_text())
+        payload = json.loads(cache.read_text())
+        if payload.get("tarball_size") == size:
+            return payload["mapping"]
     mapping: dict[str, str] = {}
     with tarfile.open(tarball, "r|bz2") as tar:
         for member in tar:
             if not member.name.endswith(".txt"):
                 continue
-            zip_name, _, fname = member.name.split("/")
+            parts = [p for p in member.name.split("/") if p not in ("", ".")]
+            if len(parts) != 3:
+                raise ValueError(f"unexpected tarball member path {member.name!r}")
+            zip_name, _, fname = parts
             m = _TAR_ZIP_RE.search(zip_name)
             if not m:
                 raise ValueError(f"unexpected tarball member path {member.name!r}")
             mapping[fname[: -len(".txt")]] = m.group("custodian")
     cache.parent.mkdir(parents=True, exist_ok=True)
-    cache.write_text(json.dumps(mapping))
+    cache.write_text(json.dumps({"tarball_size": size, "mapping": mapping}))
     return mapping
 
 
@@ -249,6 +257,14 @@ def main(args) -> int:
                     "fold to their message; exclude_parts = part docids dropped. "
                     "Decision recorded in docs/PLAN.md P5 — pick before any "
                     "token spend.",
+        "fold_scoring_caveat": "fold counts are ROW-level: a message and its "
+                    "judged parts each count once, and ~190 groups corpus-wide "
+                    "carry conflicting labels. A fold-policy SCORING path must "
+                    "first collapse to one row per parent with an explicit "
+                    "conflict rule (e.g. max relevance) and a stated weight "
+                    "convention — evaluate()'s merge permits qrels-side "
+                    "duplicates and would double-count otherwise. Also note "
+                    "the part's own text is NOT in the custodian store.",
         "estimated_r": "cell-weighted estimate from THIS qrels file; "
                        "calc1_published is the toolkit's comment value.",
     }}
