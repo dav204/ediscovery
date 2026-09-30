@@ -2,7 +2,10 @@
 against qrels and write the metrics artifact.
 
 Bush/HiCAL judgments are direct graded assessments -> unweighted estimator.
-The Enron path (P5) will pass weighted=True with the TREC 2010 strata weights.
+Enron full runs score the whole TREC 2010 judged sample with weighted=True
+(the official strata weights, reproducing calc1.c). An Enron --dev-set score is
+UNWEIGHTED and labelled a dev diagnostic: the dev draw is grade-stratified, so
+the Horvitz-Thompson weights would bias it (see validate/metrics.py).
 Only responsiveness-phase decisions enter the production set; qc decisions are
 an audit trail, not a scoring input.
 """
@@ -17,7 +20,7 @@ import pandas as pd
 from ..config import REPO_ROOT, load_pipeline_config
 from ..review import decisions as dec_mod
 from ..review.prompts import load_protocol
-from ..review.run import devset_trec_ids, resolve_protocol
+from ..review.run import UNIVERSE, devset_trec_ids, resolve_protocol
 from ..store import read_table
 from .metrics import evaluate
 
@@ -28,7 +31,7 @@ def mapped_qrels(store_root: Path, corpus: str) -> pd.DataFrame:
     Ambiguous idmap rows are excluded and a fan-out join is a hard error —
     a doubled row doubles that doc's sampling_weight in the matrix."""
     qrels = read_table(store_root, corpus, "qrels_raw").to_pandas()
-    idmap = read_table(store_root, corpus, "doc_id_map").to_pandas()
+    idmap = read_table(store_root, corpus, UNIVERSE[corpus][1]).to_pandas()
     idmap = idmap[~idmap["ambiguous"]]
     merged = qrels.merge(
         idmap[["trec_doc_id", "doc_id"]], on="trec_doc_id", how="left",
@@ -56,9 +59,6 @@ def current_responsiveness(decisions_df: pd.DataFrame, topic: str,
 
 
 def main(args) -> int:
-    if args.corpus != "bush":
-        print("validate: only --corpus bush is implemented (enron is P5)", file=sys.stderr)
-        return 2
     cfg = load_pipeline_config()
     try:
         protocol = load_protocol(
@@ -84,9 +84,25 @@ def main(args) -> int:
     unmapped = int(qrels["doc_id"].isna().sum())
     qrels = qrels[qrels["doc_id"].notna()]
 
-    result = evaluate(decisions, qrels, topic=args.topic, weighted=False)
+    weighted = args.corpus == "enron" and not args.dev_set
+    if weighted and unmapped:
+        # Dropping unmapped judged docs would shrink the universe the strata
+        # weights describe — same bias evaluate() refuses for missing decisions.
+        print(f"validate: {unmapped} judged docs for topic {args.topic} are not in "
+              f"{UNIVERSE[args.corpus][1]}; rerun `ingest --corpus enron --judged-text`",
+              file=sys.stderr)
+        return 2
+    try:
+        result = evaluate(decisions, qrels, topic=args.topic, weighted=weighted)
+    except ValueError as e:
+        print(f"validate: {e}", file=sys.stderr)
+        return 2
     payload = asdict(result)
     payload["scope"] = scope
+    payload["estimator"] = (
+        "weighted_horvitz_thompson" if weighted
+        else "unweighted_dev_diagnostic" if args.corpus == "enron" else "unweighted"
+    )
     payload["prompt_version"] = protocol.version
     payload["unmapped_judged_docs"] = unmapped
 

@@ -7,8 +7,11 @@ Per topic, sample from qrels_raw stratified by relevance grade:
   nonrel     judged rel=0 docs to fill up to sampling.devset_per_topic_max.
 
 Output artifacts/devset_{corpus}_{topic}.json holds sorted ID lists keyed by
-grade. Byte-identical across re-runs (P1 gate): the RNG is seeded from
-seeds.devset + corpus + topic only, and the output carries no timestamp.
+grade. Enron qrels are binary (1/0), so its "relevant" pool is the single
+positive grade; Enron dev-set metrics are unweighted diagnostics only (the
+grade-stratified draw would bias the strata-weighted estimator).
+Byte-identical across re-runs (P1 gate): the RNG is seeded from seeds.devset +
+corpus + topic only, and the output carries no timestamp.
 """
 
 import json
@@ -70,9 +73,6 @@ def build_devset(corpus: str, topic: str, qrels, seed: int, per_topic_max: int,
 
 
 def main(args) -> int:
-    if args.corpus != "bush":
-        print("devset: only --corpus bush is implemented (enron is P5)", file=sys.stderr)
-        return 2
     cfg = load_pipeline_config()
     corpus_cfg = load_corpus_config(args.corpus)
     topics = [args.topic] if args.topic else corpus_cfg.chosen_topics
