@@ -33,6 +33,9 @@ preprocess:
   boilerplate_body_min_repeats: 50  # bodies this common are export boilerplate
   thread_max_gap_days: 60         # same-subject gap that splits conversations
 
+ingest:
+  judged_text_max_body_chars: 60000  # enron judged-sample bodies (attachment parts incl. spreadsheets)
+
 sampling:
   devset_per_topic_max: 500
   devset_relevant_target: 150

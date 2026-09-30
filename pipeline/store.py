@@ -141,6 +141,10 @@ TABLES: dict[str, pa.Schema] = {
     "doc_id_map": DOC_ID_MAP,
     "decisions": DECISIONS,
     "overrides": OVERRIDES,
+    # Enron judged-sample scoring universe (ingest/trec_text.py): same schemas,
+    # separate tables so it never shares an idmap with the custodian store.
+    "judged_messages": MESSAGES,
+    "judged_doc_id_map": DOC_ID_MAP,
 }
 
 

@@ -14,6 +14,7 @@ from . import acquire as acquire_mod
 from .config import load_budget_config, load_pipeline_config
 from .ingest import athome as athome_mod
 from .ingest import edrm_xml as edrm_mod
+from .ingest import trec_text as trec_text_mod
 from .preprocess import run as preprocess_mod
 from .qrels import devset as devset_mod
 from .qrels import enron as qrels_enron_mod
@@ -84,6 +85,15 @@ def cmd_acquire(args) -> int:
     return acquire_mod.main(args)
 
 
+def _ingest(args) -> int:
+    if args.judged_text:
+        if args.corpus != "enron":
+            print("ingest: --judged-text applies to --corpus enron only", file=sys.stderr)
+            return 2
+        return trec_text_mod.main(args)
+    return (athome_mod if args.corpus == "bush" else edrm_mod).main(args)
+
+
 def _stub(command: str):
     def run(_args) -> int:
         print(f"`{command}` is not implemented yet (planned: {NOT_IMPLEMENTED[command]}).",
@@ -105,9 +115,10 @@ def build_parser() -> argparse.ArgumentParser:
     p_ingest = sub.add_parser("ingest", help="parse raw corpus files into the messages table")
     p_ingest.add_argument("--corpus", required=True, choices=["bush", "enron"])
     p_ingest.add_argument("--force", action="store_true")
-    p_ingest.set_defaults(
-        func=lambda args: (athome_mod if args.corpus == "bush" else edrm_mod).main(args)
-    )
+    p_ingest.add_argument("--judged-text", action="store_true",
+                          help="enron: load the TREC judged sample from the official "
+                               "text distribution (the P5 scoring universe)")
+    p_ingest.set_defaults(func=_ingest)
 
     p_preprocess = sub.add_parser("preprocess", help="dedup + threading + inclusive detection")
     p_preprocess.add_argument("--corpus", required=True, choices=["bush", "enron"])

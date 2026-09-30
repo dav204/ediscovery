@@ -7,6 +7,12 @@ submission requires ANTHROPIC_API_KEY and a human-edited protocol file.
 
 Candidate contract (idempotent): in-scope docs minus docs that already have a
 current decision for (topic, phase, tier, prompt_version).
+
+Scoring universe per corpus (UNIVERSE): Bush reviews its ingested sample; Enron
+reviews the TREC 2010 judged sample loaded from the official text distribution
+(`ingest --corpus enron --judged-text`; decision recorded in docs/PLAN.md P5),
+so an Enron full run's scope is every judged doc for the topic — exactly what
+the weighted estimator in validate/metrics.py requires.
 """
 
 import json
@@ -29,6 +35,16 @@ DOC_COLUMNS = [
     "doc_id", "custodian", "from_addr", "to", "cc", "date_raw", "subject",
     "attachment_names", "body_text", "token_estimate",
 ]
+
+
+# corpus -> (document table, idmap table) that review + validate operate on.
+UNIVERSE = {
+    "bush": ("messages", "doc_id_map"),
+    "enron": ("judged_messages", "judged_doc_id_map"),
+}
+
+# corpus -> budget phase billed by a full (non-dev-set) run.
+FULL_RUN_BUDGET_PHASE = {"bush": "bush_sample", "enron": "enron_review"}
 
 
 def resolve_protocol(protocols_root: Path, corpus: str, topic: str) -> Path:
@@ -57,7 +73,7 @@ def devset_trec_ids(artifacts: Path, corpus: str, topic: str) -> list[str]:
 
 
 def trec_to_doc_ids(store_root: Path, corpus: str, trec_ids: list[str]) -> dict[str, str]:
-    idmap = read_table(store_root, corpus, "doc_id_map").to_pylist()
+    idmap = read_table(store_root, corpus, UNIVERSE[corpus][1]).to_pylist()
     mapping = {r["trec_doc_id"]: r["doc_id"] for r in idmap}
     missing = [t for t in trec_ids if t not in mapping]
     if missing:
@@ -66,11 +82,12 @@ def trec_to_doc_ids(store_root: Path, corpus: str, trec_ids: list[str]) -> dict[
 
 
 def load_doc_rows(store_root: Path, corpus: str, doc_ids: set[str]) -> list[dict]:
-    table = read_table(store_root, corpus, "messages").select(DOC_COLUMNS)
+    table_name = UNIVERSE[corpus][0]
+    table = read_table(store_root, corpus, table_name).select(DOC_COLUMNS)
     rows = [r for r in table.to_pylist() if r["doc_id"] in doc_ids]
     missing = doc_ids - {r["doc_id"] for r in rows}
     if missing:
-        raise ValueError(f"{len(missing)} doc_ids not in messages table")
+        raise ValueError(f"{len(missing)} doc_ids not in {table_name} table")
     return sorted(rows, key=lambda r: r["doc_id"])
 
 
@@ -78,7 +95,13 @@ def tier1_scope_doc_ids(cfg, corpus: str, topic: str, dev_set: bool) -> set[str]
     if dev_set:
         trec_ids = devset_trec_ids(cfg.paths["artifacts"], corpus, topic)
         return set(trec_to_doc_ids(cfg.paths["store"], corpus, trec_ids).values())
-    table = read_table(cfg.paths["store"], corpus, "messages").select(["doc_id"])
+    if corpus == "enron":
+        # Full run = every judged doc for THIS topic (the weighted estimator
+        # refuses anything less); the judged table spans all chosen topics.
+        qrels = read_table(cfg.paths["store"], corpus, "qrels_raw").to_pylist()
+        trec_ids = sorted({r["trec_doc_id"] for r in qrels if str(r["topic"]) == str(topic)})
+        return set(trec_to_doc_ids(cfg.paths["store"], corpus, trec_ids).values())
+    table = read_table(cfg.paths["store"], corpus, UNIVERSE[corpus][0]).select(["doc_id"])
     return set(table.column("doc_id").to_pylist())
 
 
@@ -105,10 +128,6 @@ def tier1_decision_ids(decisions_df, *, topic: str, prompt_version: str) -> dict
 
 
 def main(args) -> int:
-    if args.corpus != "bush":
-        print("review: only --corpus bush is implemented (enron review is P5)", file=sys.stderr)
-        return 2
-
     cfg = load_pipeline_config()
     budget = load_budget_config()
     tier, phase = args.tier, args.phase
@@ -148,7 +167,7 @@ def main(args) -> int:
     candidates = load_doc_rows(cfg.paths["store"], args.corpus, candidate_ids)
 
     model = cfg.models[f"tier{tier}"]
-    budget_phase = "dev_loop" if args.dev_set else "bush_sample"
+    budget_phase = "dev_loop" if args.dev_set else FULL_RUN_BUDGET_PHASE[args.corpus]
     run = batch_mod.RunConfig(
         corpus=args.corpus,
         topic=args.topic,

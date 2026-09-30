@@ -32,6 +32,10 @@ validated against TREC relevance judgments. Full plan: see `docs/PLAN.md`.
       fold-vs-exclude decision recorded in PLAN.md P5, decide before reading
       the coverage gate)
 - [ ] P5 Enron qrels mapping + topic 201 review
+      (2026-09-30: scoring universe DECIDED = full TREC judged sample from the
+      official text tarball; `ingest --corpus enron --judged-text` + Enron
+      review/validate/devset wired and offline-tested. Needs: real ingest run,
+      Dan's `protocols/enron/topic201.v1.md`, an `enron_review` cap)
 - [ ] P6 Privilege review (Enron)
 - [ ] P7 Production (PDF/redaction/Bates/load files)
 - [ ] P8 Review UI + narrative + publication
@@ -49,6 +53,9 @@ python -m pipeline acquire --corpus bush [--verify-only]
 python -m pipeline qrels --corpus bush
 python -m pipeline devset --corpus bush [--topic 401]   # default: all chosen_topics
 python -m pipeline review --corpus bush --topic 401 --tier 1 --dev-set --dry-run
+python -m pipeline ingest --corpus enron --judged-text   # P5 scoring universe
+python -m pipeline devset --corpus enron
+python -m pipeline review --corpus enron --topic 201 --dev-set --dry-run
 ```
 
 ## Hard rules

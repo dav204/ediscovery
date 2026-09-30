@@ -18,6 +18,7 @@ class PipelineConfig:
     sampling: dict
     normalization_version: str
     preprocess: dict = field(default_factory=dict)
+    ingest: dict = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -64,6 +65,7 @@ def load_pipeline_config(config_dir: Path = CONFIG_DIR) -> PipelineConfig:
         sampling=raw["sampling"],
         normalization_version=raw["normalization"]["version"],
         preprocess=raw.get("preprocess", {}),
+        ingest=raw.get("ingest", {}),
     )
 
 
