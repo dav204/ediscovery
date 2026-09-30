@@ -18,6 +18,7 @@ from .preprocess import run as preprocess_mod
 from .qrels import devset as devset_mod
 from .qrels import enron as qrels_enron_mod
 from .qrels import parse as qrels_mod
+from .review import protocol_gen as protocol_gen_mod
 from .review import run as review_mod
 from .store import TABLES, table_path
 from .validate import run as validate_mod
@@ -124,6 +125,13 @@ def build_parser() -> argparse.ArgumentParser:
     p_devset.add_argument("--corpus", required=True, choices=["bush", "enron"])
     p_devset.add_argument("--topic", help="default: all chosen_topics from the corpus config")
     p_devset.set_defaults(func=devset_mod.main)
+
+    p_protocol = sub.add_parser(
+        "protocol", help="write verbatim v1 review protocols from official topic text"
+    )
+    p_protocol.add_argument("--corpus", required=True, choices=["bush", "enron"])
+    p_protocol.add_argument("--topic", help="default: every topic in the topics file")
+    p_protocol.set_defaults(func=protocol_gen_mod.main)
 
     p_review = sub.add_parser("review", help="tiered LLM responsiveness review (cost-gated)")
     p_review.add_argument("--corpus", required=True, choices=["bush", "enron"])
