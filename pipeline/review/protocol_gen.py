@@ -14,7 +14,7 @@ existing protocol file and never writes a version other than v1.
 import sys
 from pathlib import Path
 
-from ..config import REPO_ROOT, load_pipeline_config
+from ..config import CONFIG_DIR, REPO_ROOT, _load_yaml, load_pipeline_config
 from ..qrels.parse import TOPICS_FILE
 
 GENERATED_MARKER = "<!-- generated: verbatim v1 from official topic text (pipeline protocol) -->"
@@ -80,6 +80,16 @@ def read_bush_topics(path: Path) -> dict[str, tuple[str, str]]:
     return topics
 
 
+def read_enron_topics(config_dir: Path = CONFIG_DIR) -> dict[str, tuple[str, str]]:
+    """topic -> (title, request) from config/corpora/enron.yaml `topic_statements`
+    (verbatim TREC 2009 Legal wording; see the comment there for provenance)."""
+    raw = _load_yaml(Path(config_dir) / "corpora" / "enron.yaml")
+    statements = raw.get("topic_statements") or {}
+    if not statements:
+        raise ValueError("enron.yaml has no topic_statements")
+    return {str(t): (s["title"], s["request"]) for t, s in statements.items()}
+
+
 def write_v1(protocols_root: Path, corpus: str, topic: str, title: str,
              request: str) -> Path | None:
     """Write protocols/<corpus>/<stem>.v1.md; returns None (untouched) if any
@@ -95,19 +105,19 @@ def write_v1(protocols_root: Path, corpus: str, topic: str, title: str,
 
 
 def main(args) -> int:
-    if args.corpus != "bush":
-        print("protocol: only --corpus bush has a machine-readable topics file; "
-              "Enron 201's v1 needs the official TREC 2010 wording", file=sys.stderr)
-        return 2
-    cfg = load_pipeline_config()
-    topics = read_bush_topics(cfg.paths["raw"] / "bush" / TOPICS_FILE)
+    if args.corpus == "bush":
+        cfg = load_pipeline_config()
+        topics = read_bush_topics(cfg.paths["raw"] / "bush" / TOPICS_FILE)
+    else:
+        topics = read_enron_topics()
     wanted = [args.topic] if args.topic else sorted(topics)
     missing = [t for t in wanted if t not in topics]
     if missing:
-        print(f"protocol: topics not in {TOPICS_FILE}: {missing}", file=sys.stderr)
+        print(f"protocol: no official topic text for {args.corpus} topics {missing}",
+              file=sys.stderr)
         return 2
     for topic in wanted:
         title, request = topics[topic]
-        path = write_v1(REPO_ROOT / "protocols", "bush", topic, title, request)
+        path = write_v1(REPO_ROOT / "protocols", args.corpus, topic, title, request)
         print(f"  {topic}: {'wrote ' + str(path.relative_to(REPO_ROOT)) if path else 'exists, skipped'}")
     return 0

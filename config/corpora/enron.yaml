@@ -104,3 +104,13 @@ files:
 # text-only rendition, 625 MB) and edrmv2nativeattach.tar.bz2 (~8 GB) if the
 # XML natives ever prove insufficient.
 chosen_topics: ["201"]
+
+# Official request text for the chosen topics, copied verbatim (curly quotes and
+# all) from the TREC 2009 Legal Track overview, section on the Interactive task
+# topics (trec.nist.gov/pubs/trec18/papers/LEGAL09.OVERVIEW.pdf; uploaded copy
+# sha256 ec1c26bd...ff366a). TREC 2010 reused topics 201-207 unchanged and its
+# overview does not restate them. Source for `python -m pipeline protocol`.
+topic_statements:
+  "201":
+    title: "Prepay transactions"
+    request: "All documents or communications that describe, discuss, refer to, report on, or relate to the Company’s engagement in structured commodity transactions known as “prepay transactions.”"

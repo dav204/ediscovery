@@ -10,6 +10,7 @@ from pipeline.review.prompts import load_protocol
 from pipeline.review.protocol_gen import (
     GENERATED_MARKER,
     read_bush_topics,
+    read_enron_topics,
     render_v1,
     write_v1,
 )
@@ -70,18 +71,26 @@ def test_write_v1_never_overwrites_an_existing_protocol(tmp_path, existing):
     assert (tmp_path / "bush" / existing).read_text() == "hand-written"
 
 
+def test_enron_topic_statements_parse():
+    topics = read_enron_topics()
+    title, request = topics["201"]
+    assert title == "Prepay transactions"
+    assert request.startswith("All documents or communications")
+
+
 def test_committed_generated_protocols_match_official_topic_text():
     # Drift guard: a generated v1 must stay byte-identical to what the official
     # topic text renders to. Changing the wording means writing a v2, never
     # editing the v1 that decisions already point at.
-    topics = read_bush_topics(GOLDEN_TOPICS)
+    sources = {"bush": read_bush_topics(GOLDEN_TOPICS), "enron": read_enron_topics()}
     generated = [p for p in sorted((REPO_ROOT / "protocols").glob("*/*.v1.md"))
                  if p.read_text().startswith(GENERATED_MARKER)]
     if not generated:
         pytest.skip("no generated v1 protocols committed yet")
     for path in generated:
         corpus = path.parent.name
-        assert corpus == "bush", f"{path}: no golden topic source for {corpus}"
-        topic = path.stem.removeprefix("athome").removesuffix(".v1")
-        title, request = topics[topic]
+        assert corpus in sources, f"{path}: no official topic source for {corpus}"
+        prefix = "athome" if corpus == "bush" else "topic"
+        topic = path.stem.removeprefix(prefix).removesuffix(".v1")
+        title, request = sources[corpus][topic]
         assert path.read_text() == render_v1(corpus, topic, title, request), path
