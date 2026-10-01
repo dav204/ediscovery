@@ -28,6 +28,7 @@ from . import cost as cost_mod
 from . import decisions as dec_mod
 from . import tiering
 from .prompts import load_protocol
+from .protocol_gen import protocol_stem
 
 _PROTOCOL_VERSION_RE = re.compile(r"\.v(\d+)$")
 
@@ -50,7 +51,7 @@ FULL_RUN_BUDGET_PHASE = {"bush": "bush_sample", "enron": "enron_review"}
 def resolve_protocol(protocols_root: Path, corpus: str, topic: str) -> Path:
     """Highest-versioned protocols/<corpus>/*<topic>.vN.md; protocols are
     human-edited only (protocols/README.md), so absence is a hard stop."""
-    stem = f"athome{topic}" if corpus == "bush" else f"topic{topic}"
+    stem = protocol_stem(corpus, topic)
     candidates = sorted(
         (int(m.group(1)), p)
         for p in (protocols_root / corpus).glob(f"{stem}.v*.md")

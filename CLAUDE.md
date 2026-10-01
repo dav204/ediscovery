@@ -18,7 +18,8 @@ validated against TREC relevance judgments. Full plan: see `docs/PLAN.md`.
       (engine core built and offline-tested ahead of schedule — prompts, cost
       caps, decision log, batch runner, tiering, metrics; corpus data ready as
       of P1; gate still needs the real dev-set run, which waits on
-      ANTHROPIC_API_KEY + human-edited `protocols/bush/athome4NN.v1.md`)
+      ANTHROPIC_API_KEY; verbatim v1 protocols `protocols/bush/athome4NN.v1.md`
+      generated 2026-09-30)
 - [ ] P3 Bush/HiCAL validation runs + 2023 comparison table (9 topics)
 - [x] P4 Enron ingest + deterministic preprocessing
       (ingest 2026-07-21 — 101,860 messages from the v2 XML zips, 0 parse
@@ -52,6 +53,7 @@ python -m pipeline spend           # budget burn vs caps
 python -m pipeline acquire --corpus bush [--verify-only]
 python -m pipeline qrels --corpus bush
 python -m pipeline devset --corpus bush [--topic 401]   # default: all chosen_topics
+python -m pipeline protocol --corpus bush [--topic 401] # verbatim v1 from topic text
 python -m pipeline review --corpus bush --topic 401 --tier 1 --dev-set --dry-run
 python -m pipeline ingest --corpus enron --judged-text   # P5 scoring universe
 python -m pipeline devset --corpus enron
@@ -63,8 +65,11 @@ python -m pipeline review --corpus enron --topic 201 --dev-set --dry-run
 1. Never commit anything under `data/` (gitignored; keep it that way).
 2. Never quote, paste, or paraphrase bystander email content anywhere — code, fixtures,
    logs, decision rationales, commit messages, artifacts. Name only public principals.
-3. `protocols/` files are HUMAN-EDITED ONLY. Claude must never create or modify review
-   protocols; prompt iteration happens by Dan editing a new `*.vN.md` file.
+3. `protocols/` wording is Dan's. The one exception (Dan, 2026-09-30): Claude may create
+   a topic's **v1** only via `python -m pipeline protocol`, which pastes the official
+   topic text verbatim into fixed boilerplate and never overwrites an existing file.
+   Claude must never hand-edit a protocol or write v2+; any rewrite informed by
+   dev-set results is Dan's (or needs his explicit sign-off) as a new `*.vN.md`.
 4. All LLM submission goes through `pipeline/review/batch.py` (cost-gated). No ad-hoc
    API calls to score documents.
 5. Tests green before any batch submission; `--dry-run` before any review run; check
