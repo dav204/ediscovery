@@ -153,3 +153,19 @@ def test_workspace_headers_only_when_set():
     assert workspace_headers({"ANTHROPIC_WORKSPACE_ID": "wrkspc_x"}) == {
         "anthropic-workspace-id": "wrkspc_x"
     }
+
+
+def test_parse_model_output_takes_last_complete_answer():
+    from pipeline.review.batch import parse_model_output
+
+    two = ('Initial: {"decision": "not_responsive", "confidence": 0.6, "rationale": "a"}\n'
+           'On reflection:\n{"decision": "responsive", "confidence": 0.8, "rationale": "b"}')
+    assert parse_model_output(two)["decision"] == "responsive"
+    nested_then_answer = ('{"note": {"x": 1}}\n'
+                          '```json\n{"decision": "borderline", "confidence": 0.5, "rationale": "c"}\n```')
+    assert parse_model_output(nested_then_answer)["decision"] == "borderline"
+    import pytest
+    with pytest.raises(ValueError, match="missing keys"):
+        parse_model_output('{"decision": "responsive"}')
+    with pytest.raises(ValueError, match="no JSON object"):
+        parse_model_output("no braces here")

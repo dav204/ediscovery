@@ -68,18 +68,28 @@ def build_requests(candidates: list[dict], protocol: Protocol, run: RunConfig) -
 def parse_model_output(text: str) -> dict:
     """Parse the protocol-mandated JSON object {decision, confidence, rationale}.
 
-    Tolerates markdown code fences and leading/trailing prose; raises ValueError
-    if no JSON object with the required keys is found.
+    Tolerates markdown fences and surrounding prose. When the model emits more
+    than one object (observed 2026-10-23: an answer followed by a revision),
+    the LAST complete object carrying the required keys is its final answer.
+    Raises ValueError if there is none.
     """
-    start = text.find("{")
-    end = text.rfind("}")
-    if start == -1 or end <= start:
-        raise ValueError("no JSON object in model output")
-    obj = json.loads(text[start : end + 1])
-    missing = {"decision", "confidence", "rationale"} - set(obj)
-    if missing:
-        raise ValueError(f"model output missing keys: {sorted(missing)}")
-    return obj
+    decoder = json.JSONDecoder()
+    found = None
+    i = text.find("{")
+    while i != -1:
+        try:
+            obj, end = decoder.raw_decode(text, i)
+        except json.JSONDecodeError:
+            i = text.find("{", i + 1)
+            continue
+        if isinstance(obj, dict) and {"decision", "confidence", "rationale"} <= set(obj):
+            found = obj
+        i = text.find("{", end)
+    if found is None:
+        if text.find("{") == -1:
+            raise ValueError("no JSON object in model output")
+        raise ValueError("model output missing keys: no object with decision/confidence/rationale")
+    return found
 
 
 def chunk(items: list, size: int) -> list[list]:
