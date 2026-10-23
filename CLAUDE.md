@@ -105,6 +105,10 @@ review, no privilege phase for the Bush corpus, no backend for the review UI.
   validates. The first paid submission died with a 400 because custom_ids used `|`
   and `.` (API pattern `^[a-zA-Z0-9_-]{1,64}$`) while all offline tests passed. When
   a real API rejects something, encode that rule in `tests/conftest.py` too.
+- 2026-10-23: pin the protocol (`review/validate --version N`) for any multi-command
+  run. Committing v2 mid-way through an unpinned tier-2 loop silently switched the
+  remaining six topics to v2, which had no tier-1 decisions to escalate. Metrics
+  artifacts are now named `metrics_<corpus>_<topic>[_dev]_v<N>.json`.
 
 ## Environment notes
 
