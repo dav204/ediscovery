@@ -94,3 +94,32 @@ def test_committed_generated_protocols_match_official_topic_text():
         topic = path.stem.removeprefix(prefix).removesuffix(".v1")
         title, request = sources[corpus][topic]
         assert path.read_text() == render_v1(corpus, topic, title, request), path
+
+
+def test_write_v2_breadth_requires_v1_and_never_overwrites(tmp_path):
+    from pipeline.review.protocol_gen import V2_BREADTH_MARKER, write_v1, write_v2_breadth
+
+    args = ("bush", "401", "Summer Olympics", "All documents concerning a bid.")
+    assert write_v2_breadth(tmp_path, *args) is None  # no v1 yet
+    write_v1(tmp_path, *args)
+    path = write_v2_breadth(tmp_path, *args)
+    text = path.read_text()
+    assert path.name == "athome401.v2.md" and text.startswith(V2_BREADTH_MARKER)
+    assert '"All documents concerning a bid."' in text and "favors inclusion" in text
+    assert write_v2_breadth(tmp_path, *args) is None  # exists -> untouched
+
+
+def test_committed_v2_breadth_protocols_match_template():
+    from pipeline.config import REPO_ROOT, load_pipeline_config
+    from pipeline.qrels.parse import TOPICS_FILE
+    from pipeline.review.protocol_gen import V2_BREADTH_MARKER, read_bush_topics, render_v2_breadth
+
+    files = [p for p in (REPO_ROOT / "protocols" / "bush").glob("*.v2.md")
+             if p.read_text().startswith(V2_BREADTH_MARKER)]
+    if not files:
+        pytest.skip("no generated v2 protocols committed")
+    topics = read_bush_topics(REPO_ROOT / "tests" / "golden" / "athome4.topics.sample")
+    for p in files:
+        topic = p.name[len("athome"):-len(".v2.md")]
+        title, request = topics[topic]
+        assert p.read_text() == render_v2_breadth("bush", topic, title, request), p.name

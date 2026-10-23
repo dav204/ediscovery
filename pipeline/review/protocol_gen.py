@@ -6,9 +6,11 @@ read the document, when to use borderline, the JSON output contract). It adds
 no topic-specific interpretation, which keeps v1 comparable to the 2023
 GPT-3.5 baseline and keeps the model from being tuned toward the qrels.
 
-Only v1 is generated. v2+ rewrites informed by dev-set results are
-human-approved (protocols/README.md), so this module refuses to overwrite any
-existing protocol file and never writes a version other than v1.
+v2+ rewrites informed by dev-set results need Dan's sign-off. A signed-off
+rewrite whose wording is topic-independent lives here as a template too (the
+Bush breadth v2, approved 2026-10-23 from docs/drafts/athome-v2-breadth.md),
+so every topic's file is the same verbatim request pasted into approved
+boilerplate. Nothing here ever overwrites an existing protocol file.
 """
 
 import sys
@@ -44,6 +46,39 @@ Reply with a single JSON object and nothing else:
 {{"decision": "responsive" | "not_responsive" | "borderline", "confidence": <number from 0 to 1>, "rationale": "<at most two sentences in your own words; never quote the document>"}}
 """
 
+V2_BREADTH_MARKER = ("<!-- generated: v2 breadth template, Dan approved 2026-10-23 "
+                     "(docs/drafts/athome-v2-breadth.md) -->")
+
+V2_BREADTH_TEMPLATE = """\
+{marker}
+# {corpus_label} topic {topic}: {title}
+
+You are a first-pass document reviewer in a civil litigation document review. Decide
+whether the document below is responsive to this production request:
+
+"{request}"
+
+## How to decide
+
+- Read "concerning" broadly. A document is responsive if any part of it relates to the
+  subject of the request in a substantive way, even if that is not its main topic.
+  Scheduling, logistics, press, constituent views, and internal discussion all count
+  when they are about the subject.
+- Any part of the document counts: the body, the subject line, quoted or forwarded
+  earlier messages, and attachments listed by name.
+- Not responsive: no connection to the subject, or a word in common with no
+  substantive connection.
+- The production standard favors inclusion. If you are unsure whether the document
+  concerns the subject, answer "responsive".
+- Answer "borderline" only if even this broad reading genuinely cannot decide.
+- Give a confidence between 0 and 1 for your decision.
+
+## Output
+
+Reply with a single JSON object and nothing else:
+{{"decision": "responsive" | "not_responsive" | "borderline", "confidence": <number from 0 to 1>, "rationale": "<at most two sentences in your own words; never quote the document>"}}
+"""
+
 CORPUS_LABELS = {"bush": "Jeb Bush email (TREC 2016 Total Recall athome4)",
                  "enron": "Enron (TREC 2010 Legal Learning task)"}
 
@@ -61,6 +96,32 @@ def render_v1(corpus: str, topic: str, title: str, request: str) -> str:
         marker=GENERATED_MARKER, corpus_label=CORPUS_LABELS[corpus],
         topic=topic, title=title.strip(), request=request,
     )
+
+
+def render_v2_breadth(corpus: str, topic: str, title: str, request: str) -> str:
+    request = " ".join(request.split())
+    if not request:
+        raise ValueError(f"{corpus}/{topic}: empty request text")
+    return V2_BREADTH_TEMPLATE.format(
+        marker=V2_BREADTH_MARKER, corpus_label=CORPUS_LABELS[corpus],
+        topic=topic, title=title.strip(), request=request,
+    )
+
+
+def write_v2_breadth(protocols_root: Path, corpus: str, topic: str, title: str,
+                     request: str) -> Path | None:
+    """Write <stem>.v2.md next to an existing v1; None (untouched) when v1 is
+    missing or any v2+ already exists."""
+    stem = protocol_stem(corpus, topic)
+    corpus_dir = Path(protocols_root) / corpus
+    if not (corpus_dir / f"{stem}.v1.md").exists():
+        return None
+    existing = [p for p in corpus_dir.glob(f"{stem}.v*.md") if not p.name.endswith(".v1.md")]
+    if existing:
+        return None
+    path = corpus_dir / f"{stem}.v2.md"
+    path.write_text(render_v2_breadth(corpus, topic, title, request))
+    return path
 
 
 def read_bush_topics(path: Path) -> dict[str, tuple[str, str]]:
@@ -118,6 +179,7 @@ def main(args) -> int:
         return 2
     for topic in wanted:
         title, request = topics[topic]
-        path = write_v1(REPO_ROOT / "protocols", args.corpus, topic, title, request)
+        writer = write_v2_breadth if getattr(args, "v2_breadth", False) else write_v1
+        path = writer(REPO_ROOT / "protocols", args.corpus, topic, title, request)
         print(f"  {topic}: {'wrote ' + str(path.relative_to(REPO_ROOT)) if path else 'exists, skipped'}")
     return 0

@@ -142,6 +142,8 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p_protocol.add_argument("--corpus", required=True, choices=["bush", "enron"])
     p_protocol.add_argument("--topic", help="default: every topic in the topics file")
+    p_protocol.add_argument("--v2-breadth", action="store_true",
+                            help="write the signed-off breadth v2 (bush) next to v1")
     p_protocol.set_defaults(func=protocol_gen_mod.main)
 
     p_review = sub.add_parser("review", help="tiered LLM responsiveness review (cost-gated)")
