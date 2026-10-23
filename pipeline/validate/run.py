@@ -62,7 +62,8 @@ def main(args) -> int:
     cfg = load_pipeline_config()
     try:
         protocol = load_protocol(
-            resolve_protocol(REPO_ROOT / "protocols", args.corpus, args.topic)
+            resolve_protocol(REPO_ROOT / "protocols", args.corpus, args.topic,
+                             getattr(args, "version", None))
         )
     except FileNotFoundError as e:
         print(f"validate: {e}", file=sys.stderr)
@@ -109,7 +110,8 @@ def main(args) -> int:
     artifacts = cfg.paths["artifacts"]
     artifacts.mkdir(parents=True, exist_ok=True)
     suffix = "_dev" if args.dev_set else ""
-    out = artifacts / f"metrics_{args.corpus}_{args.topic}{suffix}.json"
+    vtag = protocol.version.rsplit(".", 1)[-1]
+    out = artifacts / f"metrics_{args.corpus}_{args.topic}{suffix}_{vtag}.json"
     out.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
     print(f"validate {args.corpus}/{args.topic} [{scope}]: "
           f"recall={result.recall:.4f} precision={result.precision:.4f} f1={result.f1:.4f} "

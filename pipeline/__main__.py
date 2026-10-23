@@ -152,6 +152,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_review.add_argument("--tier", type=int, choices=[1, 2], default=1)
     p_review.add_argument("--phase", choices=["responsiveness", "qc"], default="responsiveness")
     p_review.add_argument("--dev-set", action="store_true")
+    p_review.add_argument("--version", type=int, help="pin protocol vN (default: latest)")
     p_review.add_argument("--dry-run", action="store_true")
     p_review.set_defaults(func=review_mod.main)
 
@@ -159,6 +160,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_validate.add_argument("--corpus", required=True, choices=["bush", "enron"])
     p_validate.add_argument("--topic", required=True)
     p_validate.add_argument("--dev-set", action="store_true")
+    p_validate.add_argument("--version", type=int, help="pin protocol vN (default: latest)")
     p_validate.set_defaults(func=validate_mod.main)
 
     sub.add_parser("status", help="phase/artifact dashboard").set_defaults(func=cmd_status)

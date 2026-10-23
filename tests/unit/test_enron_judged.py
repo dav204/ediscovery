@@ -221,7 +221,7 @@ def test_enron_validate_full_is_weighted(tmp_path, monkeypatch):
     # finds the stratum-100 relevant doc, misses the weight-3 relevant part
     _seed_decisions(cfg, {"3.1.AAA"})
     assert validate_run.main(Namespace(corpus="enron", topic="201", dev_set=False)) == 0
-    payload = json.loads((cfg.paths["artifacts"] / "metrics_enron_201.json").read_text())
+    payload = json.loads((cfg.paths["artifacts"] / "metrics_enron_201_v1.json").read_text())
     assert payload["weighted"] is True
     assert payload["estimator"] == "weighted_horvitz_thompson"
     assert payload["tp"] == 1.0 and payload["fn"] == 3.0
@@ -237,7 +237,7 @@ def test_enron_validate_dev_is_unweighted_diagnostic(tmp_path, monkeypatch):
     _seed_decisions(cfg, {"3.1.AAA"})
     assert validate_run.main(Namespace(corpus="enron", topic="201", dev_set=True)) == 0
     payload = json.loads(
-        (cfg.paths["artifacts"] / "metrics_enron_201_dev.json").read_text())
+        (cfg.paths["artifacts"] / "metrics_enron_201_dev_v1.json").read_text())
     assert payload["weighted"] is False
     assert payload["estimator"] == "unweighted_dev_diagnostic"
 

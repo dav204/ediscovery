@@ -1,21 +1,21 @@
 {
   "estimator": "unweighted",
-  "f1": 0.5161,
-  "fn": 38.0,
-  "fp": 172.0,
+  "f1": 0.5098,
+  "fn": 33.0,
+  "fp": 192.0,
   "n_evaluated": 500,
   "n_judged": 500,
   "notes": {
-    "borderline_in_eval": 50,
+    "borderline_in_eval": 3,
     "judged_without_decision": 0
   },
-  "precision": 0.3944,
+  "precision": 0.3786,
   "prompt_version": "athome402.v1",
-  "recall": 0.7467,
+  "recall": 0.78,
   "scope": "dev",
-  "tn": 178.0,
+  "tn": 158.0,
   "topic": "402",
-  "tp": 112.0,
+  "tp": 117.0,
   "unmapped_judged_docs": 0,
   "weighted": false
 }

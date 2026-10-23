@@ -48,9 +48,11 @@ UNIVERSE = {
 FULL_RUN_BUDGET_PHASE = {"bush": "bush_sample", "enron": "enron_review"}
 
 
-def resolve_protocol(protocols_root: Path, corpus: str, topic: str) -> Path:
-    """Highest-versioned protocols/<corpus>/*<topic>.vN.md; protocols are
-    human-edited only (protocols/README.md), so absence is a hard stop."""
+def resolve_protocol(protocols_root: Path, corpus: str, topic: str,
+                     version: int | None = None) -> Path:
+    """protocols/<corpus>/<stem>.v<version>.md when pinned, else the highest
+    version. Pin it for any multi-command run: committing a new version
+    mid-run silently redirected the unpinned remainder (2026-10-23)."""
     stem = protocol_stem(corpus, topic)
     candidates = sorted(
         (int(m.group(1)), p)
@@ -62,7 +64,12 @@ def resolve_protocol(protocols_root: Path, corpus: str, topic: str) -> Path:
             f"no protocol {stem}.vN.md under {protocols_root / corpus}; protocols are "
             "human-edited only — see protocols/README.md"
         )
-    return candidates[-1][1]
+    if version is None:
+        return candidates[-1][1]
+    for num, path in candidates:
+        if num == version:
+            return path
+    raise FileNotFoundError(f"no protocol {stem}.v{version}.md under {protocols_root / corpus}")
 
 
 def devset_trec_ids(artifacts: Path, corpus: str, topic: str) -> list[str]:
@@ -138,7 +145,8 @@ def main(args) -> int:
 
     from ..config import REPO_ROOT
     try:
-        protocol_path = resolve_protocol(REPO_ROOT / "protocols", args.corpus, args.topic)
+        protocol_path = resolve_protocol(REPO_ROOT / "protocols", args.corpus, args.topic,
+                                         getattr(args, "version", None))
     except FileNotFoundError as e:
         print(f"review: {e}", file=sys.stderr)
         return 2
@@ -176,7 +184,8 @@ def main(args) -> int:
         tier=tier,
         model=model,
         budget_phase=budget_phase,
-        max_output_tokens=cfg.batch["max_output_tokens"],
+        max_output_tokens=cfg.batch.get("max_output_tokens_by_tier", {}).get(
+            tier, cfg.batch["max_output_tokens"]),
         max_requests_per_batch=cfg.batch["max_requests_per_batch"],
         poll_interval_seconds=cfg.batch["poll_interval_seconds"],
     )

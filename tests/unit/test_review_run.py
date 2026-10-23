@@ -307,7 +307,17 @@ def test_validate_main_scopes_dev_set_and_writes_artifact(tmp_path, monkeypatch,
 
     assert validate_run.main(v_args) == 0
     payload = json.loads(
-        (cfg.paths["artifacts"] / "metrics_bush_401_dev.json").read_text()
+        (cfg.paths["artifacts"] / "metrics_bush_401_dev_v1.json").read_text()
     )
     assert payload["scope"] == "dev" and payload["prompt_version"] == "athome401.v1"
     assert payload["n_judged"] == 2 and payload["n_evaluated"] == 2
+
+
+def test_resolve_protocol_pins_requested_version(tmp_path):
+    (tmp_path / "bush").mkdir()
+    for v in (1, 2, 3):
+        (tmp_path / "bush" / f"athome401.v{v}.md").write_text(f"v{v}")
+    assert resolve_protocol(tmp_path, "bush", "401").name == "athome401.v3.md"
+    assert resolve_protocol(tmp_path, "bush", "401", 1).name == "athome401.v1.md"
+    with pytest.raises(FileNotFoundError, match="v9"):
+        resolve_protocol(tmp_path, "bush", "401", 9)

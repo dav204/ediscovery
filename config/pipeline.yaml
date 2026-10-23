@@ -18,6 +18,9 @@ batch:
   max_requests_per_batch: 10000   # Anthropic Message Batches API hard cap
   poll_interval_seconds: 60
   max_output_tokens: 512
+  max_output_tokens_by_tier:      # tier-2 Fable rationales ran past 512 (32/251 truncated)
+    1: 512
+    2: 1536
 
 seeds:
   devset: 42

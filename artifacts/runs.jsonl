@@ -79,3 +79,25 @@
 {"ts": "2026-10-23T18:30:36.555817+00:00", "command": "review", "argv": ["review", "--corpus", "bush", "--topic", "407", "--tier", "2", "--dev-set", "--dry-run"], "exit_code": 0}
 {"ts": "2026-10-23T18:30:38.744714+00:00", "command": "review", "argv": ["review", "--corpus", "bush", "--topic", "408", "--tier", "2", "--dev-set", "--dry-run"], "exit_code": 0}
 {"ts": "2026-10-23T18:30:40.366458+00:00", "command": "review", "argv": ["review", "--corpus", "bush", "--topic", "409", "--tier", "2", "--dev-set", "--dry-run"], "exit_code": 0}
+{"ts": "2026-10-23T18:33:45.435587+00:00", "command": "review", "argv": ["review", "--corpus", "bush", "--topic", "408", "--tier", "1", "--dev-set"], "exit_code": 0}
+{"ts": "2026-10-23T18:33:46.455517+00:00", "command": "validate", "argv": ["validate", "--corpus", "bush", "--topic", "408", "--dev-set"], "exit_code": 0}
+{"ts": "2026-10-23T18:36:01.011220+00:00", "command": "review", "argv": ["review", "--corpus", "bush", "--topic", "401", "--tier", "2", "--dev-set"], "exit_code": 0}
+{"ts": "2026-10-23T18:36:04.477420+00:00", "command": "validate", "argv": ["validate", "--corpus", "bush", "--topic", "401", "--dev-set"], "exit_code": 0}
+{"ts": "2026-10-23T18:38:11.232278+00:00", "command": "review", "argv": ["review", "--corpus", "bush", "--topic", "402", "--tier", "2", "--dev-set"], "exit_code": 0}
+{"ts": "2026-10-23T18:38:12.070985+00:00", "command": "validate", "argv": ["validate", "--corpus", "bush", "--topic", "402", "--dev-set"], "exit_code": 0}
+{"ts": "2026-10-23T18:41:11.667551+00:00", "command": "protocol", "argv": ["protocol", "--corpus", "bush", "--v2-breadth"], "exit_code": 0}
+{"ts": "2026-10-23T18:41:19.987011+00:00", "command": "review", "argv": ["review", "--corpus", "bush", "--topic", "403", "--tier", "2", "--dev-set"], "exit_code": 0}
+{"ts": "2026-10-23T18:41:20.341335+00:00", "command": "validate", "argv": ["validate", "--corpus", "bush", "--topic", "403", "--dev-set"], "exit_code": 2}
+{"ts": "2026-10-23T18:41:20.680446+00:00", "command": "review", "argv": ["review", "--corpus", "bush", "--topic", "404", "--tier", "2", "--dev-set"], "exit_code": 0}
+{"ts": "2026-10-23T18:41:20.925164+00:00", "command": "validate", "argv": ["validate", "--corpus", "bush", "--topic", "404", "--dev-set"], "exit_code": 2}
+{"ts": "2026-10-23T18:41:21.253196+00:00", "command": "review", "argv": ["review", "--corpus", "bush", "--topic", "405", "--tier", "2", "--dev-set"], "exit_code": 0}
+{"ts": "2026-10-23T18:41:21.509705+00:00", "command": "validate", "argv": ["validate", "--corpus", "bush", "--topic", "405", "--dev-set"], "exit_code": 2}
+{"ts": "2026-10-23T18:41:21.848825+00:00", "command": "review", "argv": ["review", "--corpus", "bush", "--topic", "406", "--tier", "2", "--dev-set"], "exit_code": 0}
+{"ts": "2026-10-23T18:41:22.112055+00:00", "command": "validate", "argv": ["validate", "--corpus", "bush", "--topic", "406", "--dev-set"], "exit_code": 2}
+{"ts": "2026-10-23T18:41:22.478515+00:00", "command": "review", "argv": ["review", "--corpus", "bush", "--topic", "407", "--tier", "2", "--dev-set"], "exit_code": 0}
+{"ts": "2026-10-23T18:41:22.739028+00:00", "command": "validate", "argv": ["validate", "--corpus", "bush", "--topic", "407", "--dev-set"], "exit_code": 2}
+{"ts": "2026-10-23T18:41:23.083235+00:00", "command": "review", "argv": ["review", "--corpus", "bush", "--topic", "408", "--tier", "2", "--dev-set"], "exit_code": 0}
+{"ts": "2026-10-23T18:41:23.336151+00:00", "command": "validate", "argv": ["validate", "--corpus", "bush", "--topic", "408", "--dev-set"], "exit_code": 2}
+{"ts": "2026-10-23T18:41:23.697393+00:00", "command": "review", "argv": ["review", "--corpus", "bush", "--topic", "409", "--tier", "2", "--dev-set"], "exit_code": 0}
+{"ts": "2026-10-23T18:41:23.957186+00:00", "command": "validate", "argv": ["validate", "--corpus", "bush", "--topic", "409", "--dev-set"], "exit_code": 2}
+{"ts": "2026-10-23T18:41:24.189426+00:00", "command": "spend", "argv": ["spend"], "exit_code": 0}
