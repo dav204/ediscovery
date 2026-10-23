@@ -11,7 +11,7 @@ prices:
 caps:
   dev_loop:     {usd: 25}
   bush_sample:  {usd: 0}     # 0 = locked; Bush/HiCAL validation run (P3), small + predictable
-  enron_review: {usd: 0}     # locked until P5 idmap coverage gate passes
+  enron_review: {usd: 15}    # 2026-10-23: topic 201 judged sample, $7.48 worst-case projection
   privilege:    {usd: 0}     # locked until P6
   narrative:    {usd: 0}     # locked until P8
 

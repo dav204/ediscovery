@@ -1,0 +1,19 @@
+{
+  "corpus": "enron",
+  "found": 2720,
+  "judged": 2720,
+  "max_body_chars": 60000,
+  "missing": 0,
+  "missing_docids": [],
+  "no_header_block": 1240,
+  "source": "trec/edrmv2txt-v2.tar.bz2",
+  "token_estimate_total": 7170958,
+  "topics": {
+    "201": {
+      "found": 2720,
+      "judged": 2720,
+      "parts": 1244
+    }
+  },
+  "truncated_body": 186
+}

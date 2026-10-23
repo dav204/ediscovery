@@ -70,6 +70,12 @@ python -m pipeline review --corpus enron --topic 201 --dev-set --dry-run
    topic text verbatim into fixed boilerplate and never overwrites an existing file.
    Claude must never hand-edit a protocol or write v2+; any rewrite informed by
    dev-set results is Dan's (or needs his explicit sign-off) as a new `*.vN.md`.
+   Role context (Dan, 2026-10-23): this project simulates his 2012–2017 hosting-analyst /
+   hosted-solutions-PM work (CDS / RVM / Lighthouse), where protocols came from case
+   counsel; he "has no skin in the game" on protocol wording. So when a v2 is warranted,
+   Claude drafts it in the case-counsel role and stages it for a one-line sign-off —
+   don't park the project waiting for Dan to write legal wording. Drafts never read
+   per-doc qrels labels, and v1 numbers stay reported alongside.
 4. All LLM submission goes through `pipeline/review/batch.py` (cost-gated). No ad-hoc
    API calls to score documents.
 5. Tests green before any batch submission; `--dry-run` before any review run; check
@@ -90,6 +96,11 @@ review, no privilege phase for the Bush corpus, no backend for the review UI.
   + `extractfile` — each seek re-decompresses from the stream start (O(n²); the
   50K-doc sample took >300s). Stream with `tarfile.open(path, "r|gz")` in archive
   order and sort afterwards (~3s).
+- 2026-10-23: other sessions merge PRs to `main` on GitHub between local sessions. Run
+  `git fetch && git log --oneline HEAD..origin/main` BEFORE starting work, and pull.
+  A session that skipped this re-implemented P5 judged scoring and all ten v1
+  protocols that PRs #3/#4 had already merged (work discarded; backup branch
+  `backup/local-dup-2026-10-23`).
 
 ## Environment notes
 

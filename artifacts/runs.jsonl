@@ -43,3 +43,6 @@
 {"ts": "2026-07-22T17:39:09.877079+00:00", "command": "qrels", "argv": ["qrels", "--corpus", "enron"], "exit_code": 0}
 {"ts": "2026-07-22T18:05:43.066314+00:00", "command": "acquire", "argv": ["acquire", "--corpus", "enron", "--verify-only"], "exit_code": 0}
 {"ts": "2026-07-22T18:06:56.066295+00:00", "command": "qrels", "argv": ["qrels", "--corpus", "enron"], "exit_code": 0}
+{"ts": "2026-10-23T16:07:19.609494+00:00", "command": "ingest", "argv": ["ingest", "--corpus", "enron", "--judged-text"], "exit_code": 0}
+{"ts": "2026-10-23T16:07:24.307348+00:00", "command": "review", "argv": ["review", "--corpus", "enron", "--topic", "201", "--tier", "1", "--dry-run"], "exit_code": 0}
+{"ts": "2026-10-23T16:07:25.103278+00:00", "command": "review", "argv": ["review", "--corpus", "bush", "--topic", "401", "--tier", "1", "--dev-set", "--dry-run"], "exit_code": 0}
