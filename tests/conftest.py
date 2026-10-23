@@ -33,6 +33,10 @@ class MockBatchClient:
         self._polls: dict[str, int] = {}
 
     def create(self, requests):
+        import re
+        for req in requests:  # the real API rejects anything else (2026-10-23)
+            if not re.match(r"^[a-zA-Z0-9_-]{1,64}$", req["custom_id"]):
+                raise ValueError(f"custom_id rejected by Batch API pattern: {req['custom_id']!r}")
         self.created_batches.append(requests)
         return f"batch_{len(self.created_batches):03d}"
 

@@ -101,6 +101,10 @@ review, no privilege phase for the Bush corpus, no backend for the review UI.
   A session that skipped this re-implemented P5 judged scoring and all ten v1
   protocols that PRs #3/#4 had already merged (work discarded; backup branch
   `backup/local-dup-2026-10-23`).
+- 2026-10-23: the mock Batch client must enforce every constraint the real API
+  validates. The first paid submission died with a 400 because custom_ids used `|`
+  and `.` (API pattern `^[a-zA-Z0-9_-]{1,64}$`) while all offline tests passed. When
+  a real API rejects something, encode that rule in `tests/conftest.py` too.
 
 ## Environment notes
 

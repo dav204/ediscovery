@@ -30,6 +30,26 @@ def test_custom_id_roundtrip():
     }
 
 
+def test_custom_id_matches_batch_api_pattern_for_real_ids():
+    import re
+    for doc_id, topic, version in [
+        ("bush-0123456789abcdef", "401", "athome401.v1"),
+        ("enron-0123456789abcdef", "201", "topic201.v12"),
+        ("enron-0123456789abcdef", "201", "enron_priv.v3"),
+    ]:
+        cid = dec.make_custom_id(doc_id, topic, "responsiveness", 2, version)
+        assert re.match(r"^[a-zA-Z0-9_-]{1,64}$", cid), cid
+        assert dec.parse_custom_id(cid)["prompt_version"] == version
+        assert dec.parse_custom_id(cid)["doc_id"] == doc_id
+
+
+def test_custom_id_rejects_bad_version_and_separator():
+    with pytest.raises(ValueError, match="<stem>.v<N>"):
+        dec.make_custom_id("bush-0000000000000001", "401", "responsiveness", 1, "draft")
+    with pytest.raises(ValueError, match="separator"):
+        dec.make_custom_id("bush__x", "401", "responsiveness", 1, "athome401.v1")
+
+
 def test_custom_id_length_guard():
     with pytest.raises(ValueError, match="64-char"):
         dec.make_custom_id("bush-0000000000000001", "athome102" * 5, "responsiveness", 1,

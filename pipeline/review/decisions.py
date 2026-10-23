@@ -1,12 +1,15 @@
 """Decision log: append-only JSONL, the first-class benchmark artifact.
 
 custom_id format (also used as the Batch API request id):
-    {doc_id}|{topic}|{phase_code}|t{tier}|{prompt_version}
-phase codes are kept short because the Batch API caps custom_id at 64 chars:
-    resp = responsiveness, priv = privilege, qc = qc
+    {doc_id}__{topic}__{phase_code}__t{tier}__{stem}-v{N}
+The Batch API only accepts ^[a-zA-Z0-9_-]{1,64}$ (a real submission rejected
+the original `|`/`.` format on 2026-10-23), so prompt_version `<stem>.v<N>`
+is encoded `<stem>-v<N>` and restored on parse. Phase codes stay short for
+the 64-char cap: resp = responsiveness, priv = privilege, qc = qc.
 """
 
 import json
+import re
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -20,16 +23,31 @@ RESPONSIVENESS_DECISIONS = ("responsive", "not_responsive", "borderline")
 PRIVILEGE_DECISIONS = ("privileged", "not_privileged", "partial")
 
 
+_SEP = "__"
+_CUSTOM_ID_RE = re.compile(r"^[a-zA-Z0-9_-]{1,64}$")
+_VERSION_RE = re.compile(r"^(?P<stem>.+)\.v(?P<num>\d+)$")
+
+
 def make_custom_id(doc_id: str, topic: str, phase: str, tier: int, prompt_version: str) -> str:
     code = PHASE_CODES[phase]
-    custom_id = f"{doc_id}|{topic}|{code}|t{tier}|{prompt_version}"
+    m = _VERSION_RE.match(prompt_version)
+    if not m:
+        raise ValueError(f"prompt_version {prompt_version!r} must look like <stem>.v<N>")
+    fields = [doc_id, str(topic), code, f"t{tier}", f"{m.group('stem')}-v{m.group('num')}"]
+    if any(_SEP in f for f in fields):
+        raise ValueError(f"custom_id field contains the {_SEP!r} separator: {fields!r}")
+    custom_id = _SEP.join(fields)
     if len(custom_id) > 64:
         raise ValueError(f"custom_id exceeds Batch API 64-char limit: {custom_id!r}")
+    if not _CUSTOM_ID_RE.match(custom_id):
+        raise ValueError(f"custom_id has characters the Batch API rejects: {custom_id!r}")
     return custom_id
 
 
 def parse_custom_id(custom_id: str) -> dict:
-    doc_id, topic, code, tier, prompt_version = custom_id.split("|")
+    doc_id, topic, code, tier, version_token = custom_id.split(_SEP)
+    stem, num = version_token.rsplit("-v", 1)
+    prompt_version = f"{stem}.v{num}"
     return {
         "doc_id": doc_id,
         "topic": topic,

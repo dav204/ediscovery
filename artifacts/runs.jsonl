@@ -46,3 +46,5 @@
 {"ts": "2026-10-23T16:07:19.609494+00:00", "command": "ingest", "argv": ["ingest", "--corpus", "enron", "--judged-text"], "exit_code": 0}
 {"ts": "2026-10-23T16:07:24.307348+00:00", "command": "review", "argv": ["review", "--corpus", "enron", "--topic", "201", "--tier", "1", "--dry-run"], "exit_code": 0}
 {"ts": "2026-10-23T16:07:25.103278+00:00", "command": "review", "argv": ["review", "--corpus", "bush", "--topic", "401", "--tier", "1", "--dev-set", "--dry-run"], "exit_code": 0}
+{"ts": "2026-10-23T17:51:11.779180+00:00", "command": "spend", "argv": ["spend"], "exit_code": 0}
+{"ts": "2026-10-23T17:51:27.528431+00:00", "command": "validate", "argv": ["validate", "--corpus", "bush", "--topic", "401", "--dev-set"], "exit_code": 2}
