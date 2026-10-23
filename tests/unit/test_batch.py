@@ -144,3 +144,12 @@ def test_budget_stop_between_chunks(protocol, tmp_path, mock_client_factory):
     assert len(client.created_batches) == 1  # second chunk never submitted
     assert len(out["decisions"]) == 10  # first chunk drained, not abandoned
     assert "stop_reason" in out
+
+
+def test_workspace_headers_only_when_set():
+    from pipeline.review.batch import workspace_headers
+
+    assert workspace_headers({}) == {}
+    assert workspace_headers({"ANTHROPIC_WORKSPACE_ID": "wrkspc_x"}) == {
+        "anthropic-workspace-id": "wrkspc_x"
+    }

@@ -10,6 +10,7 @@ no decision record — idempotent re-runs pick them up as candidates again.
 """
 
 import json
+import os
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -215,6 +216,14 @@ def run_batches(
     return out
 
 
+def workspace_headers(env=None) -> dict[str, str]:
+    """User-scoped keys (sk-ant-usr-...) must name a workspace on every
+    request; the shared key in ~/.config/job-search.env is one."""
+    env = os.environ if env is None else env
+    ws = env.get("ANTHROPIC_WORKSPACE_ID")
+    return {"anthropic-workspace-id": ws} if ws else {}
+
+
 class AnthropicBatchClient:
     """Thin adapter over the anthropic SDK's Message Batches API.
 
@@ -225,7 +234,7 @@ class AnthropicBatchClient:
     def __init__(self):
         import anthropic
 
-        self._client = anthropic.Anthropic()
+        self._client = anthropic.Anthropic(default_headers=workspace_headers())
 
     def create(self, requests: list[dict]) -> str:
         batch = self._client.messages.batches.create(requests=requests)
