@@ -1,0 +1,21 @@
+{
+  "estimator": "weighted_horvitz_thompson",
+  "f1": 0.2002,
+  "fn": 1203.257192,
+  "fp": 4251.341805999999,
+  "n_evaluated": 2720,
+  "n_judged": 2720,
+  "notes": {
+    "borderline_in_eval": 329,
+    "judged_without_decision": 0
+  },
+  "precision": 0.1384,
+  "prompt_version": "topic201.v1",
+  "recall": 0.362,
+  "scope": "full",
+  "tn": 679454.7214190001,
+  "topic": "201",
+  "tp": 682.6798529999999,
+  "unmapped_judged_docs": 0,
+  "weighted": true
+}
