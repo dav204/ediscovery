@@ -1,0 +1,21 @@
+{
+  "estimator": "unweighted",
+  "f1": 0.8385,
+  "fn": 13.0,
+  "fp": 29.0,
+  "n_evaluated": 500,
+  "n_judged": 500,
+  "notes": {
+    "borderline_in_eval": 0,
+    "judged_without_decision": 0
+  },
+  "precision": 0.7899,
+  "prompt_version": "athome405.v1",
+  "recall": 0.8934,
+  "scope": "dev",
+  "tn": 349.0,
+  "topic": "405",
+  "tp": 109.0,
+  "unmapped_judged_docs": 0,
+  "weighted": false
+}
